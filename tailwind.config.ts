@@ -6,17 +6,26 @@ const config: Config = {
     extend: {
       colors: {
         stage: {
-          bg: '#09070d',
-          panel: '#12081f',
-          pink: '#ff4db8',
-          cyan: '#4ef2ff',
-          mint: '#7effcd',
-          danger: '#ff6b8a'
+          bg: '#05030A',
+          panel: '#0B0814',
+          pink: '#FF4DB8',
+          cyan: '#4EF2FF',
+          mint: '#7EFFCD',
+          danger: '#FF2A55'
         }
       },
+      fontFamily: {
+        bebas: ['"Bebas Neue"', 'sans-serif'],
+        space: ['"Space Grotesk"', 'sans-serif']
+      },
       boxShadow: {
-        neon: '0 0 30px rgba(255, 77, 184, 0.28)',
-        cyan: '0 0 30px rgba(78, 242, 255, 0.18)'
+        'neon-pink': '0 0 20px rgba(255, 77, 184, 0.4), inset 0 0 10px rgba(255, 77, 184, 0.2)',
+        'neon-cyan': '0 0 20px rgba(78, 242, 255, 0.4)',
+        panel: '0 20px 40px rgba(0,0,0,0.8)'
+      },
+      dropShadow: {
+        'text-pink': '0 0 10px rgba(255, 77, 184, 0.8)',
+        'text-cyan': '0 0 10px rgba(78, 242, 255, 0.8)'
       },
       backgroundImage: {
         'stage-grid': 'radial-gradient(circle at top, rgba(255, 78, 183, 0.18), transparent 28%), radial-gradient(circle at 78% 18%, rgba(78, 242, 255, 0.14), transparent 22%), linear-gradient(160deg, #09070d 0%, #12081f 46%, #06050b 100%)'
