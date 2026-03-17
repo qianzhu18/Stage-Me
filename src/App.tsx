@@ -324,14 +324,14 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-stage-bg font-space text-white">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,77,184,0.12),transparent_32%),radial-gradient(circle_at_85%_18%,rgba(78,242,255,0.12),transparent_26%),linear-gradient(145deg,#05030A_0%,#0B0814_42%,#05030A_100%)]" />
-      <div className="pointer-events-none absolute inset-0 opacity-40 [background-image:linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] [background-size:64px_64px] [mask-image:radial-gradient(circle_at_center,black,transparent_90%)]" />
-      <div className="pointer-events-none absolute -left-24 top-[-8rem] h-72 w-72 rounded-full bg-stage-pink/20 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-[-10rem] right-[-4rem] h-96 w-96 rounded-full bg-stage-cyan/15 blur-3xl" />
+    <div className="relative min-h-screen overflow-hidden bg-stage-bg font-space text-stage-ivory">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,77,184,0.09),transparent_28%),radial-gradient(circle_at_85%_18%,rgba(78,242,255,0.08),transparent_24%),linear-gradient(145deg,#06050B_0%,#13101B_42%,#09070D_100%)]" />
+      <div className="pointer-events-none absolute inset-0 opacity-25 [background-image:linear-gradient(rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.025)_1px,transparent_1px)] [background-size:72px_72px] [mask-image:radial-gradient(circle_at_center,black,transparent_90%)]" />
+      <div className="pointer-events-none absolute -left-24 top-[-8rem] h-72 w-72 rounded-full bg-stage-pink/12 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-[-10rem] right-[-4rem] h-96 w-96 rounded-full bg-stage-cyan/10 blur-3xl" />
 
       {appConfig.features.debugPanel && (
-        <div className="fixed bottom-4 left-4 right-4 z-30 mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/55 px-4 py-3 text-sm backdrop-blur-xl">
+        <div className="fixed bottom-4 left-4 right-4 z-30 mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/8 bg-stage-ink/80 px-4 py-3 text-sm backdrop-blur-xl">
           <div className="space-y-1">
             <p className="font-medium text-white/90">
               {isDemoMode ? 'Demo fallback active' : 'Live config detected'}
@@ -521,12 +521,12 @@ function AppChrome({
 
   return (
     <div className="mx-auto max-w-7xl space-y-6">
-      <header className="sticky top-4 z-20 overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:px-6">
+      <header className="sticky top-4 z-20 overflow-hidden rounded-[2rem] border border-white/8 bg-stage-ink/80 px-5 py-4 shadow-panel backdrop-blur-2xl md:px-6">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-wrap items-center gap-3">
             <button
               onClick={onBackHome}
-              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left transition hover:border-stage-cyan/40 hover:bg-stage-cyan/10"
+              className="flex items-center gap-3 rounded-full border border-white/8 bg-white/[0.03] px-3 py-2 text-left transition hover:border-stage-cyan/30 hover:bg-stage-cyan/8"
             >
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black">
                 SM
@@ -544,8 +544,8 @@ function AppChrome({
                   onClick={() => onNavigate(item.id)}
                   className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.24em] transition ${
                     scene === item.id
-                      ? 'border-stage-cyan/50 bg-stage-cyan/12 text-stage-cyan shadow-neon-cyan'
-                      : 'border-white/10 bg-white/5 text-white/55 hover:border-white/20 hover:text-white'
+                      ? 'border-stage-cyan/35 bg-stage-cyan/10 text-stage-cyan shadow-neon-cyan'
+                      : 'border-white/8 bg-white/[0.03] text-stage-mist hover:border-white/15 hover:text-stage-ivory'
                   }`}
                 >
                   {item.label}
@@ -555,15 +555,15 @@ function AppChrome({
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/50">
+            <div className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.24em] text-stage-mist">
               {session?.provider === 'second-me' ? 'Second Me Session' : 'Demo Session'}
             </div>
-            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/50">
+            <div className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.24em] text-stage-mist">
               {selectedCandidate.name} / {currentReport.totalScore}
             </div>
             <button
               onClick={onPrimaryAction}
-              className="rounded-full border border-stage-pink/60 bg-stage-pink/14 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.26em] text-white shadow-neon-pink transition hover:-translate-y-0.5"
+              className="rounded-full border border-stage-pink/30 bg-gradient-to-r from-stage-pink/80 to-stage-rose/80 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.26em] text-black shadow-neon-pink transition hover:-translate-y-0.5"
             >
               {primaryLabel}
             </button>
@@ -658,7 +658,7 @@ function SiteHeader({
 }) {
   return (
     <header className="sticky top-4 z-20 pt-2">
-      <div className="flex flex-col gap-4 rounded-full border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:flex-row md:items-center md:justify-between md:px-6">
+      <div className="flex flex-col gap-4 rounded-full border border-white/8 bg-stage-ink/78 px-5 py-4 shadow-panel backdrop-blur-2xl md:flex-row md:items-center md:justify-between md:px-6">
         <div className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black shadow-neon-pink">
             SM
@@ -670,21 +670,21 @@ function SiteHeader({
         </div>
 
         <nav className="flex flex-wrap items-center gap-3">
-          <a href="#core-features" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/55 transition hover:text-white">
+          <a href="#core-features" className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist transition hover:text-stage-ivory">
             Features
           </a>
-          <a href="#product-preview" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/55 transition hover:text-white">
+          <a href="#product-preview" className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist transition hover:text-stage-ivory">
             Preview
           </a>
-          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/45">
+          <span className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist">
             {isDemoMode ? 'Demo fallback' : session ? 'Live OAuth' : 'Live ready'}
           </span>
-          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/45">
+          <span className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist">
             {topicFeedTitle.replace('知乎话题流：', '')}
           </span>
           <button
             onClick={onEnter}
-            className="rounded-full border border-white/80 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5"
+            className="rounded-full border border-stage-pink/25 bg-gradient-to-r from-stage-pink/85 to-stage-cyan/75 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5"
           >
             {session ? 'Launch App' : 'Connect & Launch'}
           </button>
@@ -722,7 +722,7 @@ function HeroSection({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 rounded-full border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-2 text-[11px] uppercase tracking-[0.26em] text-stage-cyan"
+          className="inline-flex items-center gap-2 rounded-full border border-stage-cyan/18 bg-stage-cyan/6 px-4 py-2 text-[11px] uppercase tracking-[0.26em] text-stage-cyan"
         >
           <span className="h-2 w-2 rounded-full bg-stage-cyan animate-pulse" />
           Official Landing / Core App
@@ -732,7 +732,7 @@ function HeroSection({
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.05 }}
-          className="mt-8 font-bebas text-[56px] leading-[0.92] tracking-[-0.04em] text-white md:text-[88px]"
+          className="mt-8 font-bebas text-[56px] leading-[0.92] tracking-[-0.04em] text-stage-ivory md:text-[88px]"
         >
           Stage Me
         </motion.h1>
@@ -741,7 +741,7 @@ function HeroSection({
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.12 }}
-          className="mt-5 max-w-[18ch] text-3xl font-semibold leading-tight text-white/92 md:text-5xl"
+          className="mt-5 max-w-[18ch] text-3xl font-semibold leading-tight text-stage-ivory md:text-5xl"
         >
           Your agent goes first. You watch what happens.
         </motion.p>
@@ -750,7 +750,7 @@ function HeroSection({
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.55, delay: 0.18 }}
-          className="mt-6 max-w-[48ch] text-base leading-7 text-white/60"
+          className="mt-6 max-w-[48ch] text-base leading-7 text-stage-mist"
         >
           一个让你的 AI Agent 先替你上场、去试配、去对话、去翻车、再被复盘训练的 A2A 社交实验场。
         </motion.p>
@@ -763,13 +763,13 @@ function HeroSection({
         >
           <button
             onClick={onEnter}
-            className="rounded-full bg-gradient-to-r from-stage-pink to-stage-cyan px-6 py-3 text-sm font-semibold text-black shadow-[0_0_40px_rgba(34,211,238,0.2)] transition hover:-translate-y-1"
+            className="rounded-full bg-gradient-to-r from-stage-pink via-stage-rose to-stage-cyan px-6 py-3 text-sm font-semibold text-black shadow-[0_0_36px_rgba(255,77,184,0.16)] transition hover:-translate-y-1"
           >
             {ctaLabel}
           </button>
           <a
             href="#product-preview"
-            className="rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+            className="rounded-full border border-white/8 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-stage-ivory/78 transition hover:border-white/16 hover:text-stage-ivory"
           >
             Watch Demo
           </a>
@@ -779,7 +779,7 @@ function HeroSection({
           <motion.div
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-6 rounded-[1.5rem] border border-stage-pink/25 bg-stage-pink/10 px-5 py-4 text-sm leading-7 text-white/78 shadow-neon-pink"
+            className="mt-6 rounded-[1.5rem] border border-stage-pink/18 bg-stage-pink/8 px-5 py-4 text-sm leading-7 text-stage-ivory/78 shadow-neon-pink"
           >
             {authNotice}
           </motion.div>
@@ -818,14 +818,18 @@ function HeroPreview({
       initial={{ opacity: 0, y: 36 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.75, delay: 0.2 }}
-      className="relative"
+      className="relative min-h-[620px]"
     >
-      <div className="absolute -left-10 top-8 h-40 w-40 rounded-full bg-stage-pink/18 blur-3xl" />
-      <div className="absolute -right-4 bottom-6 h-44 w-44 rounded-full bg-stage-cyan/18 blur-3xl" />
+      <div className="absolute -left-6 top-8 h-40 w-40 rounded-full bg-stage-pink/14 blur-3xl" />
+      <div className="absolute -right-3 top-1/3 h-48 w-48 rounded-full bg-stage-cyan/12 blur-3xl" />
+      <div className="absolute bottom-5 left-1/4 h-36 w-36 rounded-full bg-stage-mint/8 blur-3xl" />
 
-      <div className="relative rounded-[32px] border border-white/10 bg-stage-panel/90 p-5 shadow-panel backdrop-blur-2xl">
-        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
-          <div className="text-xs uppercase tracking-[0.28em] text-white/45">Stage Me / Live Preview</div>
+      <div className="absolute right-6 top-10 hidden h-28 w-28 rounded-full border border-white/8 bg-gradient-to-br from-stage-smoke to-stage-fog lg:block" />
+
+      <div className="relative overflow-hidden rounded-[36px] border border-white/8 bg-gradient-to-br from-stage-smoke via-stage-panel to-stage-ink p-5 shadow-panel backdrop-blur-2xl">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,77,184,0.08),transparent_22%),radial-gradient(circle_at_82%_22%,rgba(78,242,255,0.07),transparent_20%),linear-gradient(160deg,rgba(255,255,255,0.03),transparent_35%,rgba(255,255,255,0.02))]" />
+        <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
+          <div className="text-xs uppercase tracking-[0.28em] text-stage-mist">Stage Me / Live Preview</div>
           <div className="flex gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-stage-pink" />
             <span className="h-2.5 w-2.5 rounded-full bg-yellow-300" />
@@ -833,62 +837,83 @@ function HeroPreview({
           </div>
         </div>
 
-        <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
-          <div className="rounded-[28px] border border-white/10 bg-black/30 p-4">
-            <div className="grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
-              <div className="rounded-[24px] border border-stage-pink/20 bg-[#110B1A] p-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-[#f6aacd] font-bold text-black">
-                    {profile.name.slice(0, 1).toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="text-sm uppercase tracking-[0.2em] text-white/40">My Agent</div>
-                    <div className="mt-1 text-lg font-semibold text-white">{profile.name}</div>
-                  </div>
+        <div className="relative grid gap-5 lg:min-h-[540px]">
+          <div className="relative overflow-hidden rounded-[30px] border border-white/8 bg-[linear-gradient(180deg,rgba(255,255,255,0.03),rgba(255,255,255,0.01)),linear-gradient(140deg,#171320_0%,#0F0C17_54%,#121019_100%)] p-6 lg:min-h-[500px]">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_35%_18%,rgba(255,77,184,0.12),transparent_26%),radial-gradient(circle_at_70%_72%,rgba(78,242,255,0.1),transparent_24%)]" />
+            <div className="relative z-10 flex h-full flex-col justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.26em] text-stage-mist">Arena Broadcast</p>
+                  <h3 className="mt-3 max-w-[14ch] font-bebas text-6xl leading-none tracking-[0.1em] text-stage-ivory">
+                    ROUND 3 / 5
+                  </h3>
                 </div>
-                <div className="mt-6 space-y-4">
-                  <MetricBar label="Welcome" value={profile.welcome} />
-                  <MetricBar label="Chemistry" value={profile.chemistry} />
-                  <MetricBar label="Humor" value={profile.tags.includes('幽默型') ? 68 : 52} />
+                <div className="rounded-full border border-stage-cyan/18 bg-stage-cyan/8 px-3 py-1.5 text-[10px] uppercase tracking-[0.22em] text-stage-cyan">
+                  {previewRound.stageLabel}
                 </div>
               </div>
 
-              <div className="rounded-[24px] border border-stage-cyan/20 bg-[#0C0A16] p-4">
-                <div className="flex items-center justify-between">
-                  <div className="text-xs uppercase tracking-[0.24em] text-white/40">Round Preview</div>
-                  <span className="rounded-full bg-stage-cyan/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-stage-cyan">
-                    {previewRound.stageLabel}
-                  </span>
+              <div className="mt-8 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+                <div className="rounded-[24px] border border-white/8 bg-black/20 p-4 backdrop-blur-xl">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-[#f6aacd] font-bold text-black">
+                      {profile.name.slice(0, 1).toUpperCase()}
+                    </div>
+                    <div>
+                      <div className="text-sm uppercase tracking-[0.2em] text-stage-mist">My Agent</div>
+                      <div className="mt-1 text-lg font-semibold text-stage-ivory">{profile.name}</div>
+                    </div>
+                  </div>
+                  <div className="mt-6 space-y-4">
+                    <MetricBar label="Welcome" value={profile.welcome} />
+                    <MetricBar label="Chemistry" value={profile.chemistry} />
+                    <MetricBar label="Humor" value={profile.tags.includes('幽默型') ? 68 : 52} />
+                  </div>
                 </div>
-                <div className="mt-4 text-5xl font-black tracking-[-0.05em] text-white">3 / 5</div>
-                <div className="mt-6 space-y-3">
+
+                <div className="space-y-3">
                   <RoundBubble who={profile.name} text={previewRound.agentLine} />
                   <RoundBubble who={selectedCandidate.name} text={previewRound.opponentLine} />
+                </div>
+              </div>
+
+              <div className="mt-8 grid gap-3 md:grid-cols-[1fr_auto_auto]">
+                <div className="rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-stage-mist">Hot Topic</p>
+                  <p className="mt-2 text-sm leading-6 text-stage-ivory/78">{selectedCandidate.topic}</p>
+                </div>
+                <div className="rounded-[20px] border border-stage-cyan/18 bg-stage-cyan/8 px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-stage-cyan">Compatibility</p>
+                  <p className="mt-2 text-sm font-semibold text-stage-ivory">{selectedCandidate.compatibility}%</p>
+                </div>
+                <div className="rounded-[20px] border border-stage-pink/18 bg-stage-pink/8 px-4 py-3">
+                  <p className="text-[10px] uppercase tracking-[0.22em] text-stage-pink">Flirt Mode</p>
+                  <p className="mt-2 text-sm font-semibold text-stage-ivory">Agent-first</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-white/10 bg-[#120C1B] p-4">
-            <div className="text-xs uppercase tracking-[0.24em] text-white/40">Tonight&apos;s Report</div>
+          <div className="pointer-events-none absolute right-0 top-20 hidden w-[230px] rounded-[24px] border border-white/8 bg-stage-shell/92 p-5 shadow-panel lg:block">
+            <div className="text-xs uppercase tracking-[0.24em] text-stage-mist">Tonight&apos;s Report</div>
             <div className="mt-4 flex items-end gap-2">
-              <span className="text-6xl font-black tracking-[-0.06em] text-white">{report.totalScore}</span>
-              <span className="pb-2 text-sm text-white/45">/100</span>
+              <span className="text-6xl font-black tracking-[-0.06em] text-stage-ivory">{report.totalScore}</span>
+              <span className="pb-2 text-sm text-stage-mist">/100</span>
             </div>
-            <div className="mt-5 rounded-2xl border border-stage-cyan/15 bg-stage-cyan/5 p-4">
-              <div className="text-[10px] uppercase tracking-[0.24em] text-stage-cyan">Highlight</div>
-              <p className="mt-2 text-sm leading-6 text-white/75">{report.highlight}</p>
+            <div className="mt-5 rounded-2xl border border-stage-mint/12 bg-stage-mint/6 p-4">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-stage-mint">Highlight</div>
+              <p className="mt-2 text-sm leading-6 text-stage-ivory/72">{report.highlight}</p>
             </div>
-            <div className="mt-4 rounded-2xl border border-stage-pink/15 bg-stage-pink/5 p-4">
-              <div className="text-[10px] uppercase tracking-[0.24em] text-stage-pink">Death Replay</div>
-              <p className="mt-2 text-sm leading-6 text-white/75">第 4 轮推进过猛，导致对方欢迎度下滑并开始审视动机。</p>
+          </div>
+
+          <div className="pointer-events-none absolute -left-5 bottom-6 hidden w-[240px] rounded-[24px] border border-white/8 bg-stage-ink/86 p-4 shadow-panel lg:block">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] uppercase tracking-[0.24em] text-stage-mist">Death Replay</span>
+              <span className="rounded-full border border-stage-pink/16 bg-stage-pink/8 px-2.5 py-1 text-[9px] uppercase tracking-[0.2em] text-stage-pink">
+                Crash
+              </span>
             </div>
-            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
-              <div className="text-[10px] uppercase tracking-[0.24em] text-white/40">Current Pick</div>
-              <p className="mt-2 text-sm leading-6 text-white/75">
-                {selectedCandidate.name} · {selectedCandidate.compatibility}% compatibility
-              </p>
-            </div>
+            <p className="mt-3 text-sm leading-6 text-stage-ivory/72">第 4 轮推进过猛，导致对方欢迎度下滑并开始审视动机。</p>
           </div>
         </div>
       </div>
@@ -905,10 +930,10 @@ function CoreFeaturesSection() {
         body="首页不再只靠一句口号撑场。这里直接把玩法、结果能力和训练价值拆成可扫读的能力模块。"
       />
       <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-        <BentoCard badge="1v1 Duel" title="像直播间一样看对局，而不是看聊天记录。" body="固定 5 轮交锋，聚焦破冰、试探、话题轮和收束。" tone="pink" />
-        <BentoCard badge="Arena Trial" title="全场试配先扫一遍，再决定谁上主舞台。" body="候选擂台给出兼容率、风险点和 Top 3。" tone="cyan" />
-        <BentoCard badge="Death Replay" title="最尬一句直接标红，不再模糊复盘。" body="推进过猛、话题空转还是边界错位，会被单独抓出来。" tone="mint" />
-        <BentoCard badge="Radar Report" title="欢迎度、共鸣、吸引和续聊意愿一屏读懂。" body="评分和建议一起输出，适合继续接真实评分引擎。" tone="pink" />
+        <BentoCard badge="1v1 Duel" title="像直播间一样看对局，而不是看聊天记录。" body="固定 5 轮交锋，聚焦破冰、试探、话题轮和收束。" scene="直播式主舞台" icon="D" tone="pink" />
+        <BentoCard badge="Arena Trial" title="全场试配先扫一遍，再决定谁上主舞台。" body="候选擂台给出兼容率、风险点和 Top 3。" scene="先看谁最买账" icon="A" tone="cyan" />
+        <BentoCard badge="Death Replay" title="最尬一句直接标红，不再模糊复盘。" body="推进过猛、话题空转还是边界错位，会被单独抓出来。" scene="知道为什么翻车" icon="R" tone="mint" />
+        <BentoCard badge="Radar Report" title="欢迎度、共鸣、吸引和续聊意愿一屏读懂。" body="评分和建议一起输出，适合继续接真实评分引擎。" scene="结果页即卖点" icon="S" tone="pink" />
       </div>
     </section>
   );
@@ -972,48 +997,51 @@ function ProductPreviewSection({
         body="评分、死亡回放、亮点句和趋势指标，都是用户愿意继续训练 Agent 的理由。首页必须把这部分前置展示。"
       />
       <div className="mt-10 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="rounded-[2rem] border border-white/10 bg-stage-panel/80 p-8 shadow-panel backdrop-blur-xl">
+        <div className="rounded-[2.2rem] border border-white/8 bg-gradient-to-br from-stage-shell via-stage-panel to-stage-ink p-8 shadow-panel backdrop-blur-xl">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-stage-pink/76">Tonight&apos;s Report</p>
               <h3 className="mt-4 font-bebas text-7xl leading-none text-white md:text-8xl">{report.totalScore}</h3>
               <p className="mt-5 max-w-[44ch] text-sm leading-7 text-white/62">{report.summary}</p>
             </div>
-            <div className="rounded-[1.5rem] border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-3 text-right">
+            <div className="rounded-[1.5rem] border border-stage-cyan/16 bg-stage-cyan/6 px-4 py-3 text-right">
               <p className="text-[10px] uppercase tracking-[0.24em] text-stage-cyan">Top Match</p>
-              <p className="mt-2 text-lg font-semibold text-white">{topThree[0]?.name ?? report.opponentName}</p>
+              <p className="mt-2 text-lg font-semibold text-stage-ivory">{topThree[0]?.name ?? report.opponentName}</p>
             </div>
           </div>
 
           <div className="mt-8 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
             <div className="space-y-4">
-              <div className="rounded-[1.5rem] border border-stage-mint/20 bg-stage-mint/8 p-5">
+              <div className="rounded-[1.5rem] border border-stage-mint/16 bg-stage-mint/6 p-5">
                 <p className="text-[10px] uppercase tracking-[0.24em] text-stage-mint">Highlight</p>
-                <p className="mt-3 text-sm leading-7 text-white/80">{report.highlight}</p>
+                <p className="mt-3 text-sm leading-7 text-stage-ivory/80">{report.highlight}</p>
               </div>
-              <div className="rounded-[1.5rem] border border-stage-pink/20 bg-stage-pink/8 p-5">
+              <div className="rounded-[1.5rem] border border-stage-pink/16 bg-stage-pink/6 p-5">
                 <p className="text-[10px] uppercase tracking-[0.24em] text-stage-pink">Death Replay</p>
-                <p className="mt-3 text-sm leading-7 text-white/80">{report.flop}</p>
+                <p className="mt-3 text-sm leading-7 text-stage-ivory/80">{report.flop}</p>
               </div>
             </div>
 
-            <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
-              <p className="text-[10px] uppercase tracking-[0.24em] text-white/40">Radar Report</p>
+            <div className="rounded-[1.5rem] border border-white/8 bg-black/20 p-5">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-stage-mist">Radar Report</p>
               <div className="mt-4 space-y-4">
                 {radar.map((item) => (
                   <MetricBar key={item.label} label={item.label} value={item.value} />
                 ))}
               </div>
+              <p className="mt-5 text-sm uppercase tracking-[0.24em] text-stage-mist">
+                The point isn&apos;t matching. The point is knowing why.
+              </p>
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/40">Top agents tonight</p>
+          <div className="rounded-[2rem] border border-white/8 bg-stage-smoke/68 p-6 backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-stage-mist">Top agents tonight</p>
             <div className="mt-5 space-y-3">
               {topThree.map((candidate, index) => (
-                <div key={candidate.id} className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                <div key={candidate.id} className="flex items-center justify-between rounded-2xl border border-white/8 bg-black/20 px-4 py-3">
                   <div className="flex items-center gap-3">
                     <span className="font-bebas text-3xl text-stage-pink">0{index + 1}</span>
                     <div>
@@ -1027,11 +1055,11 @@ function ProductPreviewSection({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
-            <p className="text-xs uppercase tracking-[0.28em] text-white/40">Tune notes</p>
+          <div className="rounded-[2rem] border border-white/8 bg-stage-smoke/68 p-6 backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-stage-mist">Tune notes</p>
             <div className="mt-5 space-y-3">
               {advice.slice(0, 3).map((item) => (
-                <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-7 text-white/70">
+                <div key={item} className="rounded-2xl border border-white/8 bg-black/20 px-4 py-3 text-sm leading-7 text-stage-ivory/70">
                   {item}
                 </div>
               ))}
@@ -1073,21 +1101,21 @@ function ZhihuTopicSection({
         body="这是 Stage Me 和普通匹配产品的差异点之一。它让互动从寒暄直接进入观点组织和三观碰撞。"
       />
       <div className="mt-10 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="rounded-[2rem] border border-stage-cyan/20 bg-stage-cyan/8 p-8 shadow-panel backdrop-blur-xl">
+        <div className="rounded-[2rem] border border-stage-cyan/14 bg-gradient-to-br from-stage-fog via-stage-panel to-stage-ink p-8 shadow-panel backdrop-blur-xl">
           <p className="text-xs uppercase tracking-[0.3em] text-stage-cyan">Live topic feed</p>
-          <h3 className="mt-5 max-w-[20ch] text-3xl font-semibold leading-tight text-white">
+          <h3 className="mt-5 max-w-[20ch] text-3xl font-semibold leading-tight text-stage-ivory">
             {topicFeedTitle.replace('知乎话题流：', '')}
           </h3>
-          <p className="mt-5 max-w-[46ch] text-sm leading-7 text-white/64">
+          <p className="mt-5 max-w-[46ch] text-sm leading-7 text-stage-mist">
             热榜话题不是背景板，而是第三轮的局势引擎。它决定双方从闲聊切入观点表达，快速暴露世界观和思考密度。
           </p>
         </div>
 
         <div className="grid gap-4">
-          {cards.map((item) => (
-            <div key={item.title} className="rounded-[1.75rem] border border-white/10 bg-black/30 p-5 backdrop-blur-xl">
-              <p className="text-[11px] uppercase tracking-[0.24em] text-white/42">{item.title}</p>
-              <p className="mt-3 text-sm leading-7 text-white/72">{item.body}</p>
+          {cards.map((item, index) => (
+            <div key={item.title} className={`rounded-[1.75rem] border p-5 backdrop-blur-xl ${index === 0 ? 'border-stage-cyan/14 bg-stage-cyan/6' : 'border-white/8 bg-stage-smoke/62'}`}>
+              <p className="text-[11px] uppercase tracking-[0.24em] text-stage-mist">{item.title}</p>
+              <p className="mt-3 text-sm leading-7 text-stage-ivory/72">{item.body}</p>
             </div>
           ))}
         </div>
@@ -1123,11 +1151,11 @@ function LiveSignalsSection({
         title="给首页一点轻量社交证明，而不是空喊品牌口号。"
         body="今晚最强对象、最难池子、最离谱翻车和进步最快的 Agent，会让页面更像一个正在发生的产品。"
       />
-      <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+      <div className="mt-10 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         {signals.map((item) => (
-          <div key={item.label} className="rounded-[1.8rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
-            <p className="text-[11px] uppercase tracking-[0.24em] text-white/40">{item.label}</p>
-            <p className="mt-4 text-base leading-7 text-white/76">{item.value}</p>
+          <div key={item.label} className="rounded-[1.7rem] border border-white/8 bg-stage-smoke/54 px-5 py-4 backdrop-blur-xl">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-stage-mist">{item.label}</p>
+            <p className="mt-3 text-sm leading-7 text-stage-ivory/76">{item.value}</p>
           </div>
         ))}
       </div>
@@ -1138,12 +1166,12 @@ function LiveSignalsSection({
 function FinalCTASection({ ctaLabel, onEnter }: { ctaLabel: string; onEnter: () => void }) {
   return (
     <section className="py-20">
-      <div className="rounded-[2.25rem] border border-white/10 bg-gradient-to-r from-stage-pink/14 via-white/[0.03] to-stage-cyan/14 p-8 shadow-panel backdrop-blur-xl md:p-12">
-        <p className="text-xs uppercase tracking-[0.32em] text-white/46">Final CTA</p>
-        <h2 className="mt-5 max-w-[18ch] text-4xl font-semibold leading-tight text-white md:text-5xl">
+      <div className="rounded-[2.25rem] border border-white/8 bg-gradient-to-r from-stage-fog via-stage-smoke to-stage-ink p-8 shadow-panel backdrop-blur-xl md:p-12">
+        <p className="text-xs uppercase tracking-[0.32em] text-stage-mist">Final CTA</p>
+        <h2 className="mt-5 max-w-[18ch] text-4xl font-semibold leading-tight text-stage-ivory md:text-5xl">
           Let the agent fail first, then train it to win.
         </h2>
-        <p className="mt-5 max-w-[48ch] text-sm leading-7 text-white/62">
+        <p className="mt-5 max-w-[48ch] text-sm leading-7 text-stage-mist">
           现在就进入应用区，看你的 Agent 先替你上场试配、对话、翻车，再拿着结果页回来调风格。
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
@@ -1176,18 +1204,18 @@ function SectionHeading({
 }) {
   return (
     <div className="max-w-3xl">
-      <p className="text-xs uppercase tracking-[0.34em] text-white/40">{eyebrow}</p>
-      <h2 className="mt-4 text-3xl font-semibold leading-tight text-white md:text-4xl">{title}</h2>
-      <p className="mt-4 max-w-[48ch] text-sm leading-7 text-white/58">{body}</p>
+      <p className="text-xs uppercase tracking-[0.34em] text-stage-mist">{eyebrow}</p>
+      <h2 className="mt-4 text-3xl font-semibold leading-tight text-stage-ivory md:text-4xl">{title}</h2>
+      <p className="mt-4 max-w-[48ch] text-sm leading-7 text-stage-mist">{body}</p>
     </div>
   );
 }
 
 function RoundBubble({ who, text }: { who: string; text: string }) {
   return (
-    <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-3">
-      <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">{who}</div>
-      <p className="mt-2 text-sm leading-6 text-white/75">{text}</p>
+    <div className="rounded-2xl border border-white/8 bg-stage-shell/82 p-3 shadow-[0_12px_40px_rgba(0,0,0,0.22)]">
+      <div className="text-[10px] uppercase tracking-[0.22em] text-stage-mist">{who}</div>
+      <p className="mt-2 text-sm leading-6 text-stage-ivory/75">{text}</p>
     </div>
   );
 }
@@ -1852,10 +1880,10 @@ function ReportScoreboard({
 
 function HeroMetric({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="rounded-[1.6rem] border border-white/10 bg-black/30 p-5 text-left backdrop-blur-xl">
-      <p className="text-xs uppercase tracking-[0.34em] text-white/40">{label}</p>
-      <h3 className="mt-3 text-lg font-semibold text-white">{value}</h3>
-      <p className="mt-2 text-sm leading-6 text-white/50">{hint}</p>
+    <div className="rounded-[1.6rem] border border-white/8 bg-stage-smoke/72 p-5 text-left backdrop-blur-xl">
+      <p className="text-xs uppercase tracking-[0.34em] text-stage-mist">{label}</p>
+      <h3 className="mt-3 text-lg font-semibold text-stage-ivory">{value}</h3>
+      <p className="mt-2 text-sm leading-6 text-stage-ash">{hint}</p>
     </div>
   );
 }
@@ -1864,26 +1892,36 @@ function BentoCard({
   badge,
   title,
   body,
+  scene,
+  icon,
   tone
 }: {
   badge: string;
   title: string;
   body: string;
+  scene: string;
+  icon: string;
   tone: 'pink' | 'cyan' | 'mint';
 }) {
   const toneMap = {
-    pink: 'border-stage-pink/20 bg-stage-pink/8 text-stage-pink',
-    cyan: 'border-stage-cyan/20 bg-stage-cyan/8 text-stage-cyan',
-    mint: 'border-stage-mint/20 bg-stage-mint/8 text-stage-mint'
+    pink: 'border-stage-pink/18 bg-stage-pink/6 text-stage-pink',
+    cyan: 'border-stage-cyan/18 bg-stage-cyan/6 text-stage-cyan',
+    mint: 'border-stage-mint/18 bg-stage-mint/6 text-stage-mint'
   } as const;
 
   return (
-    <div className="rounded-[1.85rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/20">
-      <span className={`inline-flex rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-[0.26em] ${toneMap[tone]}`}>
-        {badge}
-      </span>
-      <h3 className="mt-5 text-xl font-semibold leading-8 text-white">{title}</h3>
-      <p className="mt-4 text-sm leading-7 text-white/58">{body}</p>
+    <div className="rounded-[1.85rem] border border-white/8 bg-stage-smoke/72 p-6 backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/14">
+      <div className="flex items-start justify-between gap-4">
+        <span className={`inline-flex rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-[0.26em] ${toneMap[tone]}`}>
+          {badge}
+        </span>
+        <span className={`flex h-11 w-11 items-center justify-center rounded-2xl border text-sm font-semibold ${toneMap[tone]}`}>
+          {icon}
+        </span>
+      </div>
+      <p className="mt-4 text-[11px] uppercase tracking-[0.24em] text-stage-mist">{scene}</p>
+      <h3 className="mt-4 text-xl font-semibold leading-8 text-stage-ivory">{title}</h3>
+      <p className="mt-4 text-sm leading-7 text-stage-mist">{body}</p>
     </div>
   );
 }
@@ -2184,7 +2222,7 @@ function InsightBlock({ label, value, tone }: { label: string; value: string; to
 function MetricBar({ label, value }: { label: string; value: number }) {
   return (
     <div>
-      <div className="flex items-center justify-between text-sm text-white/65">
+      <div className="flex items-center justify-between text-sm text-stage-ivory/65">
         <span>{label}</span>
         <span>{value}</span>
       </div>
