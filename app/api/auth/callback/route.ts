@@ -6,17 +6,39 @@ function homeUrl(request: Request, state: string) {
   return url;
 }
 
+function readCookie(cookieHeader: string | null, key: string) {
+  if (!cookieHeader) {
+    return '';
+  }
+
+  const parts = cookieHeader.split(';').map((part) => part.trim());
+  const entry = parts.find((part) => part.startsWith(`${key}=`));
+  return entry ? decodeURIComponent(entry.slice(key.length + 1)) : '';
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const code = searchParams.get('code');
   const error = searchParams.get('error');
+  const state = searchParams.get('state');
+  const expectedState = readCookie(request.headers.get('cookie'), 'stage_me_oauth_state');
 
   if (error) {
-    return NextResponse.redirect(homeUrl(request, 'error'));
+    const response = NextResponse.redirect(homeUrl(request, 'error'));
+    response.cookies.delete('stage_me_oauth_state');
+    return response;
+  }
+
+  if (!state || !expectedState || state !== expectedState) {
+    const response = NextResponse.redirect(homeUrl(request, 'error'));
+    response.cookies.delete('stage_me_oauth_state');
+    return response;
   }
 
   if (!code) {
-    return NextResponse.redirect(homeUrl(request, 'demo'));
+    const response = NextResponse.redirect(homeUrl(request, 'demo'));
+    response.cookies.delete('stage_me_oauth_state');
+    return response;
   }
 
   const tokenUrl = process.env.SECOND_ME_TOKEN_URL;
@@ -25,7 +47,9 @@ export async function GET(request: Request) {
   const redirectUri = process.env.NEXT_PUBLIC_SECOND_ME_REDIRECT_URI;
 
   if (!tokenUrl || !clientId || !clientSecret || !redirectUri) {
-    return NextResponse.redirect(homeUrl(request, 'demo'));
+    const response = NextResponse.redirect(homeUrl(request, 'demo'));
+    response.cookies.delete('stage_me_oauth_state');
+    return response;
   }
 
   try {
@@ -44,11 +68,17 @@ export async function GET(request: Request) {
     });
 
     if (!response.ok) {
-      return NextResponse.redirect(homeUrl(request, 'error'));
+      const errorResponse = NextResponse.redirect(homeUrl(request, 'error'));
+      errorResponse.cookies.delete('stage_me_oauth_state');
+      return errorResponse;
     }
 
-    return NextResponse.redirect(homeUrl(request, 'connected'));
+    const successResponse = NextResponse.redirect(homeUrl(request, 'connected'));
+    successResponse.cookies.delete('stage_me_oauth_state');
+    return successResponse;
   } catch {
-    return NextResponse.redirect(homeUrl(request, 'error'));
+    const errorResponse = NextResponse.redirect(homeUrl(request, 'error'));
+    errorResponse.cookies.delete('stage_me_oauth_state');
+    return errorResponse;
   }
 }

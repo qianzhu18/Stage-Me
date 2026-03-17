@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { NextResponse } from 'next/server';
 
 function homeUrl(request: Request, state: string) {
@@ -16,10 +17,19 @@ export async function GET(request: Request) {
   }
 
   const url = new URL(authUrl);
+  const state = crypto.randomUUID();
   url.searchParams.set('client_id', clientId);
   url.searchParams.set('redirect_uri', redirectUri);
   url.searchParams.set('response_type', 'code');
-  url.searchParams.set('scope', 'openid profile');
+  url.searchParams.set('state', state);
 
-  return NextResponse.redirect(url);
+  const response = NextResponse.redirect(url);
+  response.cookies.set('stage_me_oauth_state', state, {
+    httpOnly: true,
+    secure: false,
+    sameSite: 'lax',
+    path: '/'
+  });
+
+  return response;
 }
