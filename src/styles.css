@@ -1411,3 +1411,254 @@ img {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================
+   Frontend Refactor Override
+   From docs/design/前端重构.md
+   ========================================= */
+.glass-panel {
+  background: linear-gradient(180deg, rgba(15, 10, 24, 0.4), rgba(5, 3, 10, 0.85));
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.candidate-wall {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.candidate-wall .candidate-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: linear-gradient(180deg, rgba(25, 18, 38, 0.6), rgba(8, 6, 12, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  padding: 0;
+}
+
+.candidate-wall .candidate-topline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.2rem 1.2rem 0.5rem;
+}
+
+.candidate-info strong {
+  display: block;
+  font-size: 1.2rem;
+  font-family: 'Space Grotesk', sans-serif;
+  letter-spacing: 0.05em;
+  color: #fff;
+}
+
+.candidate-info small {
+  color: var(--cyan);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.candidate-body {
+  padding: 0.5rem 1.2rem 1.2rem;
+  flex-grow: 1;
+}
+
+.vibe-text {
+  margin-top: 0.8rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.candidate-stats {
+  display: flex;
+  background: rgba(0, 0, 0, 0.5);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 0.8rem 1.2rem;
+}
+
+.stat-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 0.65rem;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.stat-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: #ddd;
+  margin-top: 0.2rem;
+}
+
+.highlight-stat .stat-val {
+  color: var(--pink);
+  text-shadow: 0 0 10px rgba(255, 77, 184, 0.4);
+}
+
+.candidate-wall .candidate-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.candidate-wall .candidate-card.is-selected {
+  transform: translateY(-6px) scale(1.02);
+  border-color: var(--pink);
+  background: linear-gradient(180deg, rgba(255, 77, 184, 0.12), rgba(8, 6, 12, 0.95));
+  box-shadow:
+    0 -2px 15px rgba(255, 77, 184, 0.3),
+    inset 0 10px 20px -10px rgba(255, 77, 184, 0.2),
+    0 20px 40px rgba(0, 0, 0, 0.9);
+}
+
+.duel-stream .round-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 1rem 0;
+}
+
+.round-arena {
+  position: relative;
+  transition: all 0.5s ease;
+}
+
+.round-arena.is-hidden {
+  opacity: 0.25;
+  filter: blur(3px) grayscale(50%);
+  transform: scale(0.96);
+  pointer-events: none;
+}
+
+.round-arena.is-current {
+  opacity: 1;
+  filter: none;
+  transform: scale(1);
+}
+
+.arena-announcement {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.round-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  color: var(--text);
+  letter-spacing: 0.1em;
+}
+
+.round-stage {
+  font-size: 0.85rem;
+  color: var(--muted);
+  letter-spacing: 0.2em;
+  flex-grow: 1;
+}
+
+.arena-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.chat-bubble {
+  max-width: 85%;
+  padding: 1rem 1.2rem;
+  border-radius: 1rem;
+  position: relative;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.speaker-name {
+  display: block;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.6rem;
+  color: #888;
+}
+
+.chat-text {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #eee;
+}
+
+.chat-left {
+  align-self: flex-start;
+  border-left: 2px solid var(--pink);
+  border-radius: 0 1.2rem 1.2rem 1.2rem;
+  background: linear-gradient(90deg, rgba(255, 77, 184, 0.08), transparent);
+}
+
+.chat-left .speaker-name {
+  color: var(--pink);
+}
+
+.chat-right {
+  align-self: flex-end;
+  text-align: right;
+  border-right: 2px solid var(--cyan);
+  border-radius: 1.2rem 0 1.2rem 1.2rem;
+  background: linear-gradient(-90deg, rgba(78, 242, 255, 0.08), transparent);
+}
+
+.chat-right .speaker-name {
+  color: var(--cyan);
+}
+
+.arena-insight {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.arena-insight.is-positive {
+  background: rgba(126, 255, 205, 0.1);
+  color: var(--mint);
+  border-left: 2px solid var(--mint);
+}
+
+.arena-insight.is-danger {
+  background: rgba(255, 107, 138, 0.15);
+  color: var(--danger);
+  border-left: 2px solid var(--danger);
+  box-shadow: 0 0 15px rgba(255, 107, 138, 0.2);
+}
+
+@media (max-width: 760px) {
+  .candidate-wall {
+    grid-template-columns: 1fr;
+  }
+
+  .chat-bubble {
+    max-width: 100%;
+  }
+}

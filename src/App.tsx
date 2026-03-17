@@ -662,29 +662,39 @@ function App() {
                     onClick={() => setSelectedCandidateId(candidate.id)}
                   >
                     <div className="candidate-topline">
-                      <div className="agent-avatar">{candidate.name.slice(0, 1)}</div>
-                      <div>
+                      <div className="agent-avatar alt">{candidate.name.slice(0, 1)}</div>
+                      <div className="candidate-info">
                         <strong>{candidate.name}</strong>
                         <small>
                           {candidate.codename} · {candidate.archetype}
                         </small>
                       </div>
                     </div>
-                    <div className="tag-row">
-                      {candidate.tags.map((tag) => (
-                        <Tag key={tag} tone="pink">
-                          {tag}
-                        </Tag>
-                      ))}
+
+                    <div className="candidate-body">
+                      <div className="tag-row">
+                        {candidate.tags.map((tag) => (
+                          <Tag key={tag} tone={selectedCandidateId === candidate.id ? 'cyan' : 'pink'}>
+                            {tag}
+                          </Tag>
+                        ))}
+                      </div>
+                      <p className="vibe-text">&quot;{candidate.vibe}&quot;</p>
                     </div>
-                    <p className="body-copy slim">{candidate.vibe}</p>
-                    <div className="score-line">
-                      <span>预计难度 {candidate.difficulty}</span>
-                      <span>有趣度 {candidate.fun}</span>
-                    </div>
-                    <div className="score-line muted-line">
-                      <span>兼容分 {candidate.compatibility}</span>
-                      <span>{candidate.momentum}</span>
+
+                    <div className="candidate-stats">
+                      <div className="stat-col">
+                        <span className="stat-label">难度</span>
+                        <span className="stat-val">{candidate.difficulty}</span>
+                      </div>
+                      <div className="stat-col">
+                        <span className="stat-label">有趣度</span>
+                        <span className="stat-val">{candidate.fun}</span>
+                      </div>
+                      <div className="stat-col highlight-stat">
+                        <span className="stat-label">兼容率</span>
+                        <span className="stat-val">{candidate.compatibility}%</span>
+                      </div>
                     </div>
                   </button>
                 ))}
@@ -780,29 +790,36 @@ function App() {
                   {duelRounds.map((round, index) => (
                     <article
                       key={round.round}
-                      className={`round-card ${index + 1 <= revealedRound ? 'is-visible' : 'is-hidden'} ${
+                      className={`round-arena ${index + 1 <= revealedRound ? 'is-visible' : 'is-hidden'} ${
                         index + 1 === revealedRound ? 'is-current' : ''
-                      } ${round.type === 'topic' ? 'is-topic' : ''}`}
+                      }`}
                     >
-                      <div className="round-meta">
-                        <span>
-                          ROUND {round.round} · {round.stageLabel}
-                        </span>
+                      <div className="arena-announcement">
+                        <div className="round-number">ROUND {round.round}</div>
+                        <div className="round-stage">{round.stageLabel}</div>
                         <Tag tone={round.type === 'topic' ? 'cyan' : round.welcomeDelta > 0 ? 'mint' : 'danger'}>
                           {round.systemTag}
                         </Tag>
                       </div>
-                      <div className="round-lines">
-                        <div>
-                          <p className="speaker">{profile.name}</p>
-                          <p>{round.agentLine}</p>
+
+                      <div className="arena-chat">
+                        <div className="chat-bubble chat-left">
+                          <span className="speaker-name">{profile.name}</span>
+                          <p className="chat-text">{round.agentLine}</p>
                         </div>
-                        <div>
-                          <p className="speaker">{selectedCandidate.name}</p>
-                          <p>{round.opponentLine}</p>
+
+                        <div className="chat-bubble chat-right">
+                          <span className="speaker-name">{selectedCandidate.name}</span>
+                          <p className="chat-text">{round.opponentLine}</p>
                         </div>
                       </div>
-                      <p className="round-insight">{round.insight}</p>
+
+                      <div className={`arena-insight ${round.welcomeDelta < 0 ? 'is-danger' : 'is-positive'}`}>
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true">
+                          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
+                        </svg>
+                        <span>{round.insight}</span>
+                      </div>
                     </article>
                   ))}
                 </div>
