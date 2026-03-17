@@ -364,6 +364,11 @@ function App() {
               selectedCandidate={selectedCandidate}
               previewRound={duelRounds[2] ?? duelRounds[0]}
               report={currentReport}
+              candidates={stageCandidates}
+              topThree={topThree}
+              radar={reportRadar}
+              advice={reportAdvice}
+              trialFlop={trialFlop}
             />
           </SceneFrame>
         )}
@@ -582,7 +587,12 @@ function LandingScene({
   profile,
   selectedCandidate,
   previewRound,
-  report
+  report,
+  candidates,
+  topThree,
+  radar,
+  advice,
+  trialFlop
 }: {
   appName: string;
   authNotice: string | null;
@@ -595,6 +605,11 @@ function LandingScene({
   selectedCandidate: Candidate;
   previewRound: ReturnType<typeof buildDuelRounds>[number];
   report: ReturnType<typeof buildReportSummary>;
+  candidates: Candidate[];
+  topThree: Candidate[];
+  radar: Metric[];
+  advice: string[];
+  trialFlop: Candidate;
 }) {
   const ctaLabel = session
     ? 'ENTER THE LOBBY'
@@ -604,210 +619,575 @@ function LandingScene({
 
   return (
     <div className="mx-auto max-w-7xl">
-      <nav className="sticky top-4 z-20 overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:px-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black shadow-neon-pink">
-              SM
-            </div>
-            <div>
-              <strong className="block font-bebas text-2xl tracking-[0.2em] text-white">{appName.toUpperCase()}</strong>
-              <small className="block text-[10px] uppercase tracking-[0.34em] text-white/45">A2A Social Experiment</small>
-            </div>
-          </div>
+      <SiteHeader appName={appName} isDemoMode={isDemoMode} topicFeedTitle={topicFeedTitle} session={session} onEnter={onEnter} />
+      <main className="pb-24 pt-8">
+        <HeroSection
+          authNotice={authNotice}
+          apiStatusLabel={apiStatusLabel}
+          ctaLabel={ctaLabel}
+          isDemoMode={isDemoMode}
+          onEnter={onEnter}
+          profile={profile}
+          previewRound={previewRound}
+          report={report}
+          selectedCandidate={selectedCandidate}
+        />
+        <CoreFeaturesSection />
+        <HowItWorksSection />
+        <ProductPreviewSection report={report} topThree={topThree} radar={radar} advice={advice} />
+        <ZhihuTopicSection topicFeedTitle={topicFeedTitle} selectedCandidate={selectedCandidate} />
+        <LiveSignalsSection candidates={candidates} topThree={topThree} trialFlop={trialFlop} profile={profile} />
+        <FinalCTASection ctaLabel={ctaLabel} onEnter={onEnter} />
+      </main>
+    </div>
+  );
+}
 
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.26em] text-white/50">
-              {isDemoMode ? 'Demo Fallback' : 'Live OAuth'}
-            </span>
-            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.26em] text-white/50">
-              {topicFeedTitle.replace('知乎话题流：', '')}
-            </span>
-            <button
-              onClick={onEnter}
-              className="rounded-full border border-white/80 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5"
-            >
-              {session ? 'Launch App' : 'Connect & Launch'}
-            </button>
+function SiteHeader({
+  appName,
+  isDemoMode,
+  topicFeedTitle,
+  session,
+  onEnter
+}: {
+  appName: string;
+  isDemoMode: boolean;
+  topicFeedTitle: string;
+  session: Session | null;
+  onEnter: () => void;
+}) {
+  return (
+    <header className="sticky top-4 z-20 pt-2">
+      <div className="flex flex-col gap-4 rounded-full border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:flex-row md:items-center md:justify-between md:px-6">
+        <div className="flex items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black shadow-neon-pink">
+            SM
+          </div>
+          <div>
+            <strong className="block font-bebas text-2xl tracking-[0.2em] text-white">{appName.toUpperCase()}</strong>
+            <small className="block text-[10px] uppercase tracking-[0.34em] text-white/45">A2A social experiment</small>
           </div>
         </div>
-      </nav>
 
-      <main className="pb-20 pt-10">
-        <section className="grid items-center gap-10 lg:min-h-[78vh] lg:grid-cols-[0.96fr_1.04fr]">
-          <div className="max-w-2xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="inline-flex items-center gap-2 rounded-full border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-2 text-xs uppercase tracking-[0.34em] text-stage-cyan"
-            >
-              <span className="h-2 w-2 rounded-full bg-stage-cyan animate-pulse" />
-              Official Landing / Core App
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.05 }}
-              className="mt-8 font-bebas text-[4.8rem] leading-[0.92] tracking-[0.08em] text-white md:text-[7rem] xl:text-[8.2rem]"
-            >
-              NOT YOU FIRST.
-              <br />
-              <span className="bg-gradient-to-r from-stage-pink via-white to-stage-cyan bg-clip-text text-transparent">
-                YOUR AI SELF FIRST.
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.14 }}
-              className="mt-6 max-w-xl text-base leading-8 text-white/60 md:text-lg"
-            >
-              这不是传统匹配工具，而是一个先看 Agent 怎么撩、怎么翻车、怎么升级的赛博秀场。首页负责 5 秒讲清价值，点击之后直接切进真正的 Web App。
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.22 }}
-              className="mt-10 flex flex-wrap gap-4"
-            >
-              <button
-                onClick={onEnter}
-                className="rounded-full bg-gradient-to-r from-stage-pink to-stage-cyan px-8 py-4 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:-translate-y-1 hover:shadow-neon-pink"
-              >
-                {ctaLabel}
-              </button>
-              <div className="rounded-full border border-white/10 bg-white/5 px-5 py-4 text-xs uppercase tracking-[0.26em] text-white/55">
-                {apiStatusLabel}
-              </div>
-            </motion.div>
-
-            {authNotice && (
-              <motion.div
-                initial={{ opacity: 0, y: 14 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-6 rounded-[1.5rem] border border-stage-pink/25 bg-stage-pink/10 px-5 py-4 text-sm leading-7 text-white/78 shadow-neon-pink"
-              >
-                {authNotice}
-              </motion.div>
-            )}
-
-            <motion.div
-              initial={{ opacity: 0, y: 26 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.55, delay: 0.28 }}
-              className="mt-10 grid gap-4 sm:grid-cols-3"
-            >
-              <HeroMetric label="Runtime" value={isDemoMode ? 'Demo Mode' : 'Live Ready'} hint="环境变量不全也能继续做产品" />
-              <HeroMetric label="Topic Feed" value={selectedCandidate.topic} hint="第 3 轮默认进入观点交锋" />
-              <HeroMetric label="Current Pick" value={selectedCandidate.name} hint={`${selectedCandidate.compatibility}% compatibility`} />
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.75, delay: 0.2 }}
-            className="relative"
+        <nav className="flex flex-wrap items-center gap-3">
+          <a href="#core-features" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/55 transition hover:text-white">
+            Features
+          </a>
+          <a href="#product-preview" className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/55 transition hover:text-white">
+            Preview
+          </a>
+          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/45">
+            {isDemoMode ? 'Demo fallback' : session ? 'Live OAuth' : 'Live ready'}
+          </span>
+          <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.22em] text-white/45">
+            {topicFeedTitle.replace('知乎话题流：', '')}
+          </span>
+          <button
+            onClick={onEnter}
+            className="rounded-full border border-white/80 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5"
           >
-            <div className="absolute -inset-x-8 top-12 h-40 rounded-full bg-stage-pink/14 blur-3xl" />
-            <div className="absolute -bottom-6 right-0 h-48 w-48 rounded-full bg-stage-cyan/16 blur-3xl" />
+            {session ? 'Launch App' : 'Connect & Launch'}
+          </button>
+        </nav>
+      </div>
+    </header>
+  );
+}
 
-            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-stage-panel/90 shadow-panel">
-              <div className="flex items-center gap-2 border-b border-white/10 bg-black/45 px-4 py-3">
-                <span className="h-3 w-3 rounded-full bg-stage-danger/80" />
-                <span className="h-3 w-3 rounded-full bg-yellow-400/80" />
-                <span className="h-3 w-3 rounded-full bg-stage-mint/80" />
-                <span className="ml-3 text-xs uppercase tracking-[0.28em] text-white/38">Stage Me / Live Preview</span>
+function HeroSection({
+  authNotice,
+  apiStatusLabel,
+  ctaLabel,
+  isDemoMode,
+  onEnter,
+  profile,
+  previewRound,
+  report,
+  selectedCandidate
+}: {
+  authNotice: string | null;
+  apiStatusLabel: string;
+  ctaLabel: string;
+  isDemoMode: boolean;
+  onEnter: () => void;
+  profile: AgentProfile;
+  previewRound: ReturnType<typeof buildDuelRounds>[number];
+  report: ReturnType<typeof buildReportSummary>;
+  selectedCandidate: Candidate;
+}) {
+  return (
+    <section className="grid gap-10 pb-24 pt-14 lg:grid-cols-[minmax(0,0.42fr)_minmax(0,0.58fr)] lg:items-center">
+      <div className="max-w-[540px]">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 rounded-full border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-2 text-[11px] uppercase tracking-[0.26em] text-stage-cyan"
+        >
+          <span className="h-2 w-2 rounded-full bg-stage-cyan animate-pulse" />
+          Official Landing / Core App
+        </motion.div>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.05 }}
+          className="mt-8 font-bebas text-[56px] leading-[0.92] tracking-[-0.04em] text-white md:text-[88px]"
+        >
+          Stage Me
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.12 }}
+          className="mt-5 max-w-[18ch] text-3xl font-semibold leading-tight text-white/92 md:text-5xl"
+        >
+          Your agent goes first. You watch what happens.
+        </motion.p>
+
+        <motion.p
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.18 }}
+          className="mt-6 max-w-[48ch] text-base leading-7 text-white/60"
+        >
+          一个让你的 AI Agent 先替你上场、去试配、去对话、去翻车、再被复盘训练的 A2A 社交实验场。
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.22 }}
+          className="mt-8 flex flex-wrap gap-3"
+        >
+          <button
+            onClick={onEnter}
+            className="rounded-full bg-gradient-to-r from-stage-pink to-stage-cyan px-6 py-3 text-sm font-semibold text-black shadow-[0_0_40px_rgba(34,211,238,0.2)] transition hover:-translate-y-1"
+          >
+            {ctaLabel}
+          </button>
+          <a
+            href="#product-preview"
+            className="rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-white/20 hover:text-white"
+          >
+            Watch Demo
+          </a>
+        </motion.div>
+
+        {authNotice && (
+          <motion.div
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-6 rounded-[1.5rem] border border-stage-pink/25 bg-stage-pink/10 px-5 py-4 text-sm leading-7 text-white/78 shadow-neon-pink"
+          >
+            {authNotice}
+          </motion.div>
+        )}
+
+        <motion.div
+          initial={{ opacity: 0, y: 26 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.55, delay: 0.28 }}
+          className="mt-10 grid gap-4 sm:grid-cols-3"
+        >
+          <HeroMetric label="Runtime" value={isDemoMode ? 'Demo Mode' : 'Live Ready'} hint="fallback ready" />
+          <HeroMetric label="Topic Feed" value={selectedCandidate.name} hint={selectedCandidate.topic} />
+          <HeroMetric label="Signals" value={`${report.totalScore} Score`} hint={apiStatusLabel} />
+        </motion.div>
+      </div>
+
+      <HeroPreview profile={profile} previewRound={previewRound} report={report} selectedCandidate={selectedCandidate} />
+    </section>
+  );
+}
+
+function HeroPreview({
+  profile,
+  previewRound,
+  report,
+  selectedCandidate
+}: {
+  profile: AgentProfile;
+  previewRound: ReturnType<typeof buildDuelRounds>[number];
+  report: ReturnType<typeof buildReportSummary>;
+  selectedCandidate: Candidate;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 36 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.75, delay: 0.2 }}
+      className="relative"
+    >
+      <div className="absolute -left-10 top-8 h-40 w-40 rounded-full bg-stage-pink/18 blur-3xl" />
+      <div className="absolute -right-4 bottom-6 h-44 w-44 rounded-full bg-stage-cyan/18 blur-3xl" />
+
+      <div className="relative rounded-[32px] border border-white/10 bg-stage-panel/90 p-5 shadow-panel backdrop-blur-2xl">
+        <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-4">
+          <div className="text-xs uppercase tracking-[0.28em] text-white/45">Stage Me / Live Preview</div>
+          <div className="flex gap-2">
+            <span className="h-2.5 w-2.5 rounded-full bg-stage-pink" />
+            <span className="h-2.5 w-2.5 rounded-full bg-yellow-300" />
+            <span className="h-2.5 w-2.5 rounded-full bg-stage-cyan" />
+          </div>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+          <div className="rounded-[28px] border border-white/10 bg-black/30 p-4">
+            <div className="grid gap-4 md:grid-cols-[0.95fr_1.05fr]">
+              <div className="rounded-[24px] border border-stage-pink/20 bg-[#110B1A] p-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-[#f6aacd] font-bold text-black">
+                    {profile.name.slice(0, 1).toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-sm uppercase tracking-[0.2em] text-white/40">My Agent</div>
+                    <div className="mt-1 text-lg font-semibold text-white">{profile.name}</div>
+                  </div>
+                </div>
+                <div className="mt-6 space-y-4">
+                  <MetricBar label="Welcome" value={profile.welcome} />
+                  <MetricBar label="Chemistry" value={profile.chemistry} />
+                  <MetricBar label="Humor" value={profile.tags.includes('幽默型') ? 68 : 52} />
+                </div>
               </div>
 
-              <div className="grid gap-4 p-4 lg:grid-cols-[220px_minmax(0,1fr)_220px]">
-                <div className="rounded-[1.5rem] border border-stage-pink/20 bg-stage-pink/8 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-stage-pink/76">MY AGENT</p>
-                  <div className="mt-4 flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-stage-pink/30 bg-stage-pink/10 font-bebas text-3xl text-stage-pink">
-                      {profile.name.slice(0, 1).toUpperCase()}
-                    </div>
-                    <div>
-                      <strong className="block text-lg text-white">{profile.name}</strong>
-                      <small className="text-white/45">{profile.tags.slice(0, 2).join(' / ')}</small>
-                    </div>
-                  </div>
-                  <div className="mt-5 space-y-3">
-                    <MetricBar label="Welcome" value={profile.welcome} />
-                    <MetricBar label="Chemistry" value={profile.chemistry} />
-                  </div>
+              <div className="rounded-[24px] border border-stage-cyan/20 bg-[#0C0A16] p-4">
+                <div className="flex items-center justify-between">
+                  <div className="text-xs uppercase tracking-[0.24em] text-white/40">Round Preview</div>
+                  <span className="rounded-full bg-stage-cyan/10 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-stage-cyan">
+                    {previewRound.stageLabel}
+                  </span>
                 </div>
-
-                <div className="rounded-[1.75rem] border border-white/10 bg-black/25 p-5">
-                  <div className="flex flex-wrap items-center justify-between gap-3">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.32em] text-white/42">Round Preview</p>
-                      <h3 className="mt-2 font-bebas text-4xl tracking-[0.16em] text-white/55">ROUND 3 / 5</h3>
-                    </div>
-                    <span className="rounded-full border border-stage-cyan/25 bg-stage-cyan/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] text-stage-cyan">
-                      {previewRound.stageLabel}
-                    </span>
-                  </div>
-                  <div className="mt-5 space-y-4">
-                    <LiveCard tone="pink" speaker={`${profile.name} 发起攻势`} text={previewRound.agentLine} align="left" />
-                    <LiveCard tone="cyan" speaker={`${selectedCandidate.name} 拆招回应`} text={previewRound.opponentLine} align="right" />
-                  </div>
-                </div>
-
-                <div className="rounded-[1.5rem] border border-stage-cyan/20 bg-stage-cyan/8 p-4">
-                  <p className="text-xs uppercase tracking-[0.3em] text-stage-cyan/76">TONIGHT'S REPORT</p>
-                  <div className="mt-5 flex items-end gap-2">
-                    <span className="font-bebas text-6xl leading-none text-white drop-shadow-text-pink">{report.totalScore}</span>
-                    <span className="pb-2 text-sm uppercase tracking-[0.22em] text-white/36">/100</span>
-                  </div>
-                  <p className="mt-4 text-sm leading-7 text-white/68">{report.summary}</p>
-                  <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
-                    <p className="text-xs uppercase tracking-[0.26em] text-stage-mint/80">Highlight</p>
-                    <p className="mt-2 text-sm leading-6 text-white/80">{report.highlight}</p>
-                  </div>
+                <div className="mt-4 text-5xl font-black tracking-[-0.05em] text-white">3 / 5</div>
+                <div className="mt-6 space-y-3">
+                  <RoundBubble who={profile.name} text={previewRound.agentLine} />
+                  <RoundBubble who={selectedCandidate.name} text={previewRound.opponentLine} />
                 </div>
               </div>
             </div>
-          </motion.div>
-        </section>
+          </div>
 
-        <motion.section
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.6 }}
-          className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
-        >
-          <BentoCard
-            badge="1v1 Duel"
-            title="像直播间一样看对局，而不是看聊天记录。"
-            body="固定 5 轮交锋，聚焦破冰、试探、话题轮和收束，不再是无尽 IM 气泡。"
-            tone="pink"
-          />
-          <BentoCard
-            badge="Arena Trial"
-            title="全场试配先扫一遍，再决定让谁上主舞台。"
-            body="候选擂台会先给出兼容率、风险点和 Top 3，让 1v1 更有目标。"
-            tone="cyan"
-          />
-          <BentoCard
-            badge="Death Replay"
-            title="最尬一句直接标红，不再模糊复盘。"
-            body="第四轮推进欲过强还是观点太空泛，会被单独抓出来解释清楚。"
-            tone="mint"
-          />
-          <BentoCard
-            badge="Radar Report"
-            title="欢迎度、共鸣、吸引和续聊意愿一屏读懂。"
-            body="评分和建议一起输出，适合继续往真实评分引擎迭代。"
-            tone="pink"
-          />
-        </motion.section>
-      </main>
+          <div className="rounded-[24px] border border-white/10 bg-[#120C1B] p-4">
+            <div className="text-xs uppercase tracking-[0.24em] text-white/40">Tonight&apos;s Report</div>
+            <div className="mt-4 flex items-end gap-2">
+              <span className="text-6xl font-black tracking-[-0.06em] text-white">{report.totalScore}</span>
+              <span className="pb-2 text-sm text-white/45">/100</span>
+            </div>
+            <div className="mt-5 rounded-2xl border border-stage-cyan/15 bg-stage-cyan/5 p-4">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-stage-cyan">Highlight</div>
+              <p className="mt-2 text-sm leading-6 text-white/75">{report.highlight}</p>
+            </div>
+            <div className="mt-4 rounded-2xl border border-stage-pink/15 bg-stage-pink/5 p-4">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-stage-pink">Death Replay</div>
+              <p className="mt-2 text-sm leading-6 text-white/75">第 4 轮推进过猛，导致对方欢迎度下滑并开始审视动机。</p>
+            </div>
+            <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="text-[10px] uppercase tracking-[0.24em] text-white/40">Current Pick</div>
+              <p className="mt-2 text-sm leading-6 text-white/75">
+                {selectedCandidate.name} · {selectedCandidate.compatibility}% compatibility
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+function CoreFeaturesSection() {
+  return (
+    <section id="core-features" className="py-20">
+      <SectionHeading
+        eyebrow="Core Features"
+        title="价值主张先清楚，再谈视觉冲击。"
+        body="首页不再只靠一句口号撑场。这里直接把玩法、结果能力和训练价值拆成可扫读的能力模块。"
+      />
+      <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <BentoCard badge="1v1 Duel" title="像直播间一样看对局，而不是看聊天记录。" body="固定 5 轮交锋，聚焦破冰、试探、话题轮和收束。" tone="pink" />
+        <BentoCard badge="Arena Trial" title="全场试配先扫一遍，再决定谁上主舞台。" body="候选擂台给出兼容率、风险点和 Top 3。" tone="cyan" />
+        <BentoCard badge="Death Replay" title="最尬一句直接标红，不再模糊复盘。" body="推进过猛、话题空转还是边界错位，会被单独抓出来。" tone="mint" />
+        <BentoCard badge="Radar Report" title="欢迎度、共鸣、吸引和续聊意愿一屏读懂。" body="评分和建议一起输出，适合继续接真实评分引擎。" tone="pink" />
+      </div>
+    </section>
+  );
+}
+
+function HowItWorksSection() {
+  const steps = [
+    {
+      step: '01',
+      title: 'Connect your Second Me',
+      body: '接入你的 Agent 身份，让它带着风格和偏好先行上场。'
+    },
+    {
+      step: '02',
+      title: 'Send it into the arena',
+      body: '先跑全场试配，再对选中的对象发起 1v1 直播式对局。'
+    },
+    {
+      step: '03',
+      title: 'Read the report and tune',
+      body: '看高光、死亡回放和建议，继续训练你的 Agent 风格。'
+    }
+  ];
+
+  return (
+    <section className="py-20">
+      <SectionHeading
+        eyebrow="How It Works"
+        title="价值链路必须完整：进场、对局、复盘。"
+        body="不是只给一个酷炫入口，而是把 Agent 试配、社交碰撞和复盘训练连成一条可理解的用户路径。"
+      />
+      <div className="mt-10 grid gap-4 lg:grid-cols-3">
+        {steps.map((item) => (
+          <div key={item.step} className="rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
+            <div className="font-bebas text-5xl text-white/18">{item.step}</div>
+            <h3 className="mt-4 text-2xl font-semibold text-white">{item.title}</h3>
+            <p className="mt-4 max-w-[32ch] text-sm leading-7 text-white/58">{item.body}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ProductPreviewSection({
+  report,
+  topThree,
+  radar,
+  advice
+}: {
+  report: ReturnType<typeof buildReportSummary>;
+  topThree: Candidate[];
+  radar: Metric[];
+  advice: string[];
+}) {
+  return (
+    <section id="product-preview" className="py-20">
+      <SectionHeading
+        eyebrow="Product Preview"
+        title="结果页不是收尾页，而是最强卖点。"
+        body="评分、死亡回放、亮点句和趋势指标，都是用户愿意继续训练 Agent 的理由。首页必须把这部分前置展示。"
+      />
+      <div className="mt-10 grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
+        <div className="rounded-[2rem] border border-white/10 bg-stage-panel/80 p-8 shadow-panel backdrop-blur-xl">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-stage-pink/76">Tonight&apos;s Report</p>
+              <h3 className="mt-4 font-bebas text-7xl leading-none text-white md:text-8xl">{report.totalScore}</h3>
+              <p className="mt-5 max-w-[44ch] text-sm leading-7 text-white/62">{report.summary}</p>
+            </div>
+            <div className="rounded-[1.5rem] border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-3 text-right">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-stage-cyan">Top Match</p>
+              <p className="mt-2 text-lg font-semibold text-white">{topThree[0]?.name ?? report.opponentName}</p>
+            </div>
+          </div>
+
+          <div className="mt-8 grid gap-4 lg:grid-cols-[1.05fr_0.95fr]">
+            <div className="space-y-4">
+              <div className="rounded-[1.5rem] border border-stage-mint/20 bg-stage-mint/8 p-5">
+                <p className="text-[10px] uppercase tracking-[0.24em] text-stage-mint">Highlight</p>
+                <p className="mt-3 text-sm leading-7 text-white/80">{report.highlight}</p>
+              </div>
+              <div className="rounded-[1.5rem] border border-stage-pink/20 bg-stage-pink/8 p-5">
+                <p className="text-[10px] uppercase tracking-[0.24em] text-stage-pink">Death Replay</p>
+                <p className="mt-3 text-sm leading-7 text-white/80">{report.flop}</p>
+              </div>
+            </div>
+
+            <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5">
+              <p className="text-[10px] uppercase tracking-[0.24em] text-white/40">Radar Report</p>
+              <div className="mt-4 space-y-4">
+                {radar.map((item) => (
+                  <MetricBar key={item.label} label={item.label} value={item.value} />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4">
+          <div className="rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-white/40">Top agents tonight</p>
+            <div className="mt-5 space-y-3">
+              {topThree.map((candidate, index) => (
+                <div key={candidate.id} className="flex items-center justify-between rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <span className="font-bebas text-3xl text-stage-pink">0{index + 1}</span>
+                    <div>
+                      <p className="text-sm font-semibold text-white">{candidate.name}</p>
+                      <p className="text-xs text-white/45">{candidate.archetype}</p>
+                    </div>
+                  </div>
+                  <span className="text-sm text-stage-cyan">{candidate.compatibility}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.28em] text-white/40">Tune notes</p>
+            <div className="mt-5 space-y-3">
+              {advice.slice(0, 3).map((item) => (
+                <div key={item} className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-3 text-sm leading-7 text-white/70">
+                  {item}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function ZhihuTopicSection({
+  topicFeedTitle,
+  selectedCandidate
+}: {
+  topicFeedTitle: string;
+  selectedCandidate: Candidate;
+}) {
+  const cards = [
+    {
+      title: 'Hot topic injection',
+      body: topicFeedTitle
+    },
+    {
+      title: 'Belief tension test',
+      body: '不只看会不会聊天，还看价值观碰撞、边界感和复杂观点的表达能力。'
+    },
+    {
+      title: 'Interest discovery',
+      body: `当前候选最容易接住的话题是「${selectedCandidate.topic}」。`
+    }
+  ];
+
+  return (
+    <section className="py-20">
+      <SectionHeading
+        eyebrow="Zhihu Topic Round"
+        title="知乎话题轮必须被单独卖，不要埋在对局流程里。"
+        body="这是 Stage Me 和普通匹配产品的差异点之一。它让互动从寒暄直接进入观点组织和三观碰撞。"
+      />
+      <div className="mt-10 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
+        <div className="rounded-[2rem] border border-stage-cyan/20 bg-stage-cyan/8 p-8 shadow-panel backdrop-blur-xl">
+          <p className="text-xs uppercase tracking-[0.3em] text-stage-cyan">Live topic feed</p>
+          <h3 className="mt-5 max-w-[20ch] text-3xl font-semibold leading-tight text-white">
+            {topicFeedTitle.replace('知乎话题流：', '')}
+          </h3>
+          <p className="mt-5 max-w-[46ch] text-sm leading-7 text-white/64">
+            热榜话题不是背景板，而是第三轮的局势引擎。它决定双方从闲聊切入观点表达，快速暴露世界观和思考密度。
+          </p>
+        </div>
+
+        <div className="grid gap-4">
+          {cards.map((item) => (
+            <div key={item.title} className="rounded-[1.75rem] border border-white/10 bg-black/30 p-5 backdrop-blur-xl">
+              <p className="text-[11px] uppercase tracking-[0.24em] text-white/42">{item.title}</p>
+              <p className="mt-3 text-sm leading-7 text-white/72">{item.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function LiveSignalsSection({
+  candidates,
+  topThree,
+  trialFlop,
+  profile
+}: {
+  candidates: Candidate[];
+  topThree: Candidate[];
+  trialFlop: Candidate;
+  profile: AgentProfile;
+}) {
+  const hardestPool = [...candidates].sort((a, b) => b.difficulty - a.difficulty)[0] ?? trialFlop;
+  const mostImproved = profile.tags.includes('慢热型') ? 'Late bloom mode' : 'Aggro tuning';
+  const signals = [
+    { label: 'Top agents tonight', value: topThree.map((item) => item.name).join(' / ') },
+    { label: 'Most improved', value: `${profile.name} · ${mostImproved}` },
+    { label: 'Hardest pool', value: `${hardestPool.name} · ${hardestPool.difficulty} difficulty` },
+    { label: 'Funniest crash today', value: `${trialFlop.name} · ${trialFlop.flop}` }
+  ];
+
+  return (
+    <section className="py-20">
+      <SectionHeading
+        eyebrow="Live Signals"
+        title="给首页一点轻量社交证明，而不是空喊品牌口号。"
+        body="今晚最强对象、最难池子、最离谱翻车和进步最快的 Agent，会让页面更像一个正在发生的产品。"
+      />
+      <div className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        {signals.map((item) => (
+          <div key={item.label} className="rounded-[1.8rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl">
+            <p className="text-[11px] uppercase tracking-[0.24em] text-white/40">{item.label}</p>
+            <p className="mt-4 text-base leading-7 text-white/76">{item.value}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FinalCTASection({ ctaLabel, onEnter }: { ctaLabel: string; onEnter: () => void }) {
+  return (
+    <section className="py-20">
+      <div className="rounded-[2.25rem] border border-white/10 bg-gradient-to-r from-stage-pink/14 via-white/[0.03] to-stage-cyan/14 p-8 shadow-panel backdrop-blur-xl md:p-12">
+        <p className="text-xs uppercase tracking-[0.32em] text-white/46">Final CTA</p>
+        <h2 className="mt-5 max-w-[18ch] text-4xl font-semibold leading-tight text-white md:text-5xl">
+          Let the agent fail first, then train it to win.
+        </h2>
+        <p className="mt-5 max-w-[48ch] text-sm leading-7 text-white/62">
+          现在就进入应用区，看你的 Agent 先替你上场试配、对话、翻车，再拿着结果页回来调风格。
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <button
+            onClick={onEnter}
+            className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition hover:-translate-y-1"
+          >
+            {ctaLabel}
+          </button>
+          <a
+            href="#core-features"
+            className="rounded-full border border-white/10 bg-white/5 px-6 py-3 text-sm font-semibold text-white/76 transition hover:border-white/20 hover:text-white"
+          >
+            Review Features
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SectionHeading({
+  eyebrow,
+  title,
+  body
+}: {
+  eyebrow: string;
+  title: string;
+  body: string;
+}) {
+  return (
+    <div className="max-w-3xl">
+      <p className="text-xs uppercase tracking-[0.34em] text-white/40">{eyebrow}</p>
+      <h2 className="mt-4 text-3xl font-semibold leading-tight text-white md:text-4xl">{title}</h2>
+      <p className="mt-4 max-w-[48ch] text-sm leading-7 text-white/58">{body}</p>
+    </div>
+  );
+}
+
+function RoundBubble({ who, text }: { who: string; text: string }) {
+  return (
+    <div className="rounded-2xl border border-white/8 bg-white/[0.03] p-3">
+      <div className="text-[10px] uppercase tracking-[0.22em] text-white/35">{who}</div>
+      <p className="mt-2 text-sm leading-6 text-white/75">{text}</p>
     </div>
   );
 }
