@@ -35,6 +35,12 @@ const pageVariants = {
   out: { opacity: 0, scale: 1.015, filter: 'blur(12px)' }
 };
 
+const appSteps: Array<{ id: Exclude<Scene, 'landing'>; label: string }> = [
+  { id: 'lobby', label: 'Lobby' },
+  { id: 'duel', label: '1v1 Duel' },
+  { id: 'report', label: 'Report' }
+];
+
 function App() {
   const [scene, setScene] = useState<Scene>('landing');
   const [session, setSession] = usePersistentState<Session | null>('stage-me:session', null);
@@ -102,12 +108,6 @@ function App() {
     { label: '续聊', value: Math.min(95, 64 + Math.round(profile.restraint * 0.2)) }
   ];
   const lastSavedReport = savedReports[0] ?? null;
-
-  useEffect(() => {
-    if (session && scene === 'landing') {
-      setScene('lobby');
-    }
-  }, [scene, session]);
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -331,7 +331,7 @@ function App() {
       <div className="pointer-events-none absolute bottom-[-10rem] right-[-4rem] h-96 w-96 rounded-full bg-stage-cyan/15 blur-3xl" />
 
       {appConfig.features.debugPanel && (
-        <div className="fixed left-4 right-4 top-4 z-30 mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/45 px-4 py-3 text-sm backdrop-blur-xl">
+        <div className="fixed bottom-4 left-4 right-4 z-30 mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/55 px-4 py-3 text-sm backdrop-blur-xl">
           <div className="space-y-1">
             <p className="font-medium text-white/90">
               {isDemoMode ? 'Demo fallback active' : 'Live config detected'}
@@ -351,7 +351,7 @@ function App() {
 
       <AnimatePresence mode="wait">
         {scene === 'landing' && (
-          <SceneFrame key="landing">
+          <SceneFrame key="landing" className="px-4 pb-20 pt-6 md:px-8 md:pt-8">
             <LandingScene
               appName={appConfig.appName}
               authNotice={authNotice}
@@ -360,77 +360,110 @@ function App() {
               onEnter={handleConnect}
               apiStatusLabel={apiStatusLabel}
               topicFeedTitle={topicFeedTitle}
-            />
-          </SceneFrame>
-        )}
-
-        {scene === 'lobby' && (
-          <SceneFrame key="lobby" className="px-4 pt-24 md:px-8 md:pt-24">
-            <LobbyScene
               profile={profile}
-              session={session}
-              openerPreview={openerPreview}
-              topicEnabled={topicEnabled}
-              topicFeedTitle={topicFeedTitle}
               selectedCandidate={selectedCandidate}
-              candidates={stageCandidates}
-              savedReports={savedReports}
-              trialRunning={trialRunning}
-              trialProgress={trialProgress}
-              averageWelcome={averageWelcome}
-              topThree={topThree}
-              trialBest={trialBest}
-              trialFlop={trialFlop}
-              apiStatusLabel={apiStatusLabel}
-              onSelectCandidate={setSelectedCandidateId}
-              onToggleTopic={setTopicEnabled}
-              onStartTrial={launchTrial}
-              onStartDuel={handleStartDuel}
-              onUpdateProfile={setProfile}
-              onUpdateKeywords={updateOwnerKeywords}
-              onToggleStyleTag={toggleStyleTag}
-            />
-          </SceneFrame>
-        )}
-
-        {scene === 'duel' && (
-          <SceneFrame key="duel" className="px-4 pt-24 md:px-8 md:pt-24">
-            <DuelLiveRoom
-              profile={profile}
-              opponent={selectedCandidate}
-              rounds={duelRounds}
-              currentRound={currentRound}
-              currentRoundData={currentRoundData}
-              metrics={currentMetrics}
-              timeline={duelTimeline}
-              onBack={() => setScene('lobby')}
-              onNext={() => setCurrentRound((round) => Math.min(round + 1, duelRounds.length))}
-              onFinish={() => setScene('report')}
-            />
-          </SceneFrame>
-        )}
-
-        {scene === 'report' && (
-          <SceneFrame key="report" className="px-4 pt-24 md:px-8 md:pt-24">
-            <ReportScoreboard
+              previewRound={duelRounds[2] ?? duelRounds[0]}
               report={currentReport}
-              finalMetrics={finalMetrics}
-              radar={reportRadar}
-              advice={reportAdvice}
-              topThree={topThree}
-              candidate={selectedCandidate}
-              saveFeedback={saveFeedback}
-              lastSavedReport={lastSavedReport}
-              onSave={handleSaveReport}
-              onRetry={() => {
+            />
+          </SceneFrame>
+        )}
+
+        {scene !== 'landing' && (
+          <SceneFrame key={scene} className="px-4 pb-14 pt-6 md:px-8 md:pt-8">
+            <AppChrome
+              scene={scene}
+              session={session}
+              selectedCandidate={selectedCandidate}
+              currentReport={currentReport}
+              onBackHome={() => setScene('landing')}
+              onNavigate={(nextScene) => {
+                if (nextScene === 'duel' && currentRound < 1) {
+                  setCurrentRound(1);
+                }
+                if (nextScene === 'report' && currentRound < duelRounds.length) {
+                  setCurrentRound(duelRounds.length);
+                }
+                setScene(nextScene);
+              }}
+              onPrimaryAction={() => {
+                if (scene === 'lobby') {
+                  launchTrial();
+                  return;
+                }
+
+                if (scene === 'duel') {
+                  setScene('report');
+                  return;
+                }
+
                 setCurrentRound(1);
                 setScene('duel');
               }}
-              onBackToLobby={() => {
-                setCurrentRound(1);
-                setScene('lobby');
-              }}
-            />
+            >
+              {scene === 'lobby' && (
+                <LobbyScene
+                  profile={profile}
+                  session={session}
+                  openerPreview={openerPreview}
+                  topicEnabled={topicEnabled}
+                  topicFeedTitle={topicFeedTitle}
+                  selectedCandidate={selectedCandidate}
+                  candidates={stageCandidates}
+                  savedReports={savedReports}
+                  trialRunning={trialRunning}
+                  trialProgress={trialProgress}
+                  averageWelcome={averageWelcome}
+                  topThree={topThree}
+                  trialBest={trialBest}
+                  trialFlop={trialFlop}
+                  apiStatusLabel={apiStatusLabel}
+                  onSelectCandidate={setSelectedCandidateId}
+                  onToggleTopic={setTopicEnabled}
+                  onStartTrial={launchTrial}
+                  onStartDuel={handleStartDuel}
+                  onUpdateProfile={setProfile}
+                  onUpdateKeywords={updateOwnerKeywords}
+                  onToggleStyleTag={toggleStyleTag}
+                />
+              )}
+
+              {scene === 'duel' && (
+                <DuelLiveRoom
+                  profile={profile}
+                  opponent={selectedCandidate}
+                  rounds={duelRounds}
+                  currentRound={currentRound}
+                  currentRoundData={currentRoundData}
+                  metrics={currentMetrics}
+                  timeline={duelTimeline}
+                  onBack={() => setScene('lobby')}
+                  onNext={() => setCurrentRound((round) => Math.min(round + 1, duelRounds.length))}
+                  onFinish={() => setScene('report')}
+                />
+              )}
+
+              {scene === 'report' && (
+                <ReportScoreboard
+                  report={currentReport}
+                  finalMetrics={finalMetrics}
+                  radar={reportRadar}
+                  advice={reportAdvice}
+                  topThree={topThree}
+                  candidate={selectedCandidate}
+                  saveFeedback={saveFeedback}
+                  lastSavedReport={lastSavedReport}
+                  onSave={handleSaveReport}
+                  onRetry={() => {
+                    setCurrentRound(1);
+                    setScene('duel');
+                  }}
+                  onBackToLobby={() => {
+                    setCurrentRound(1);
+                    setScene('lobby');
+                  }}
+                />
+              )}
+            </AppChrome>
           </SceneFrame>
         )}
       </AnimatePresence>
@@ -459,6 +492,85 @@ function SceneFrame({
   );
 }
 
+function AppChrome({
+  scene,
+  session,
+  selectedCandidate,
+  currentReport,
+  onBackHome,
+  onNavigate,
+  onPrimaryAction,
+  children
+}: {
+  scene: Exclude<Scene, 'landing'>;
+  session: Session | null;
+  selectedCandidate: Candidate;
+  currentReport: ReturnType<typeof buildReportSummary>;
+  onBackHome: () => void;
+  onNavigate: (scene: Exclude<Scene, 'landing'>) => void;
+  onPrimaryAction: () => void;
+  children: React.ReactNode;
+}) {
+  const primaryLabel =
+    scene === 'lobby' ? 'Run Match Trial' : scene === 'duel' ? 'Show Report' : 'Rematch';
+
+  return (
+    <div className="mx-auto max-w-7xl space-y-6">
+      <header className="sticky top-4 z-20 overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:px-6">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={onBackHome}
+              className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-left transition hover:border-stage-cyan/40 hover:bg-stage-cyan/10"
+            >
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black">
+                SM
+              </span>
+              <span>
+                <strong className="block font-bebas text-xl tracking-[0.18em] text-white">STAGE ME</strong>
+                <small className="block text-[10px] uppercase tracking-[0.28em] text-white/42">Official Site / App</small>
+              </span>
+            </button>
+
+            <div className="flex flex-wrap gap-2">
+              {appSteps.map((item) => (
+                <button
+                  key={item.id}
+                  onClick={() => onNavigate(item.id)}
+                  className={`rounded-full border px-4 py-2 text-xs uppercase tracking-[0.24em] transition ${
+                    scene === item.id
+                      ? 'border-stage-cyan/50 bg-stage-cyan/12 text-stage-cyan shadow-neon-cyan'
+                      : 'border-white/10 bg-white/5 text-white/55 hover:border-white/20 hover:text-white'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/50">
+              {session?.provider === 'second-me' ? 'Second Me Session' : 'Demo Session'}
+            </div>
+            <div className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.24em] text-white/50">
+              {selectedCandidate.name} / {currentReport.totalScore}
+            </div>
+            <button
+              onClick={onPrimaryAction}
+              className="rounded-full border border-stage-pink/60 bg-stage-pink/14 px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.26em] text-white shadow-neon-pink transition hover:-translate-y-0.5"
+            >
+              {primaryLabel}
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div className="pt-1">{children}</div>
+    </div>
+  );
+}
+
 function LandingScene({
   appName,
   authNotice,
@@ -466,7 +578,11 @@ function LandingScene({
   session,
   onEnter,
   apiStatusLabel,
-  topicFeedTitle
+  topicFeedTitle,
+  profile,
+  selectedCandidate,
+  previewRound,
+  report
 }: {
   appName: string;
   authNotice: string | null;
@@ -475,6 +591,10 @@ function LandingScene({
   onEnter: () => void;
   apiStatusLabel: string;
   topicFeedTitle: string;
+  profile: AgentProfile;
+  selectedCandidate: Candidate;
+  previewRound: ReturnType<typeof buildDuelRounds>[number];
+  report: ReturnType<typeof buildReportSummary>;
 }) {
   const ctaLabel = session
     ? 'ENTER THE LOBBY'
@@ -483,50 +603,211 @@ function LandingScene({
       : 'CONNECT & ENTER THE STAGE';
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-8rem)] max-w-6xl flex-col items-center justify-center px-4 text-center">
-      <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-        <p className="text-xs uppercase tracking-[0.6em] text-white/45">Agent Social Showground</p>
-        <h1 className="mt-6 font-bebas text-[5.5rem] leading-none tracking-[0.16em] text-white drop-shadow-text-cyan md:text-[9rem]">
-          {appName.toUpperCase()}
-        </h1>
-        <p className="mt-4 text-lg text-white/72 md:text-2xl">
-          Not you first. <span className="text-stage-pink drop-shadow-text-pink">Your AI self first.</span>
-        </p>
-        <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-white/52 md:text-base">
-          先让 Agent 进场试配、对局、翻车、被打分，再决定你要不要自己上场。这一轮改成单页镜头流，入口只保留一颗按钮。
-        </p>
-      </motion.div>
+    <div className="mx-auto max-w-7xl">
+      <nav className="sticky top-4 z-20 overflow-hidden rounded-[2rem] border border-white/10 bg-black/45 px-5 py-4 shadow-panel backdrop-blur-2xl md:px-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-stage-pink to-stage-cyan font-bebas text-2xl text-black shadow-neon-pink">
+              SM
+            </div>
+            <div>
+              <strong className="block font-bebas text-2xl tracking-[0.2em] text-white">{appName.toUpperCase()}</strong>
+              <small className="block text-[10px] uppercase tracking-[0.34em] text-white/45">A2A Social Experiment</small>
+            </div>
+          </div>
 
-      <motion.button
-        initial={{ opacity: 0, y: 18 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.35, duration: 0.45 }}
-        onClick={onEnter}
-        className="mt-14 rounded-full border border-stage-cyan/70 bg-stage-cyan/10 px-10 py-4 text-sm font-semibold uppercase tracking-[0.32em] text-stage-cyan shadow-neon-cyan transition hover:-translate-y-1 hover:bg-stage-cyan hover:text-black"
-      >
-        {ctaLabel}
-      </motion.button>
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.26em] text-white/50">
+              {isDemoMode ? 'Demo Fallback' : 'Live OAuth'}
+            </span>
+            <span className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs uppercase tracking-[0.26em] text-white/50">
+              {topicFeedTitle.replace('知乎话题流：', '')}
+            </span>
+            <button
+              onClick={onEnter}
+              className="rounded-full border border-white/80 bg-white px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-black transition hover:-translate-y-0.5"
+            >
+              {session ? 'Launch App' : 'Connect & Launch'}
+            </button>
+          </div>
+        </div>
+      </nav>
 
-      {authNotice && (
-        <motion.div
-          initial={{ opacity: 0, y: 14 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-8 rounded-2xl border border-stage-pink/25 bg-stage-pink/10 px-5 py-4 text-sm text-white/80 shadow-neon-pink"
+      <main className="pb-20 pt-10">
+        <section className="grid items-center gap-10 lg:min-h-[78vh] lg:grid-cols-[0.96fr_1.04fr]">
+          <div className="max-w-2xl">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 rounded-full border border-stage-cyan/20 bg-stage-cyan/8 px-4 py-2 text-xs uppercase tracking-[0.34em] text-stage-cyan"
+            >
+              <span className="h-2 w-2 rounded-full bg-stage-cyan animate-pulse" />
+              Official Landing / Core App
+            </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.05 }}
+              className="mt-8 font-bebas text-[4.8rem] leading-[0.92] tracking-[0.08em] text-white md:text-[7rem] xl:text-[8.2rem]"
+            >
+              NOT YOU FIRST.
+              <br />
+              <span className="bg-gradient-to-r from-stage-pink via-white to-stage-cyan bg-clip-text text-transparent">
+                YOUR AI SELF FIRST.
+              </span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 22 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.14 }}
+              className="mt-6 max-w-xl text-base leading-8 text-white/60 md:text-lg"
+            >
+              这不是传统匹配工具，而是一个先看 Agent 怎么撩、怎么翻车、怎么升级的赛博秀场。首页负责 5 秒讲清价值，点击之后直接切进真正的 Web App。
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.22 }}
+              className="mt-10 flex flex-wrap gap-4"
+            >
+              <button
+                onClick={onEnter}
+                className="rounded-full bg-gradient-to-r from-stage-pink to-stage-cyan px-8 py-4 text-sm font-semibold uppercase tracking-[0.3em] text-black transition hover:-translate-y-1 hover:shadow-neon-pink"
+              >
+                {ctaLabel}
+              </button>
+              <div className="rounded-full border border-white/10 bg-white/5 px-5 py-4 text-xs uppercase tracking-[0.26em] text-white/55">
+                {apiStatusLabel}
+              </div>
+            </motion.div>
+
+            {authNotice && (
+              <motion.div
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="mt-6 rounded-[1.5rem] border border-stage-pink/25 bg-stage-pink/10 px-5 py-4 text-sm leading-7 text-white/78 shadow-neon-pink"
+              >
+                {authNotice}
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0, y: 26 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.28 }}
+              className="mt-10 grid gap-4 sm:grid-cols-3"
+            >
+              <HeroMetric label="Runtime" value={isDemoMode ? 'Demo Mode' : 'Live Ready'} hint="环境变量不全也能继续做产品" />
+              <HeroMetric label="Topic Feed" value={selectedCandidate.topic} hint="第 3 轮默认进入观点交锋" />
+              <HeroMetric label="Current Pick" value={selectedCandidate.name} hint={`${selectedCandidate.compatibility}% compatibility`} />
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 36 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.2 }}
+            className="relative"
+          >
+            <div className="absolute -inset-x-8 top-12 h-40 rounded-full bg-stage-pink/14 blur-3xl" />
+            <div className="absolute -bottom-6 right-0 h-48 w-48 rounded-full bg-stage-cyan/16 blur-3xl" />
+
+            <div className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-stage-panel/90 shadow-panel">
+              <div className="flex items-center gap-2 border-b border-white/10 bg-black/45 px-4 py-3">
+                <span className="h-3 w-3 rounded-full bg-stage-danger/80" />
+                <span className="h-3 w-3 rounded-full bg-yellow-400/80" />
+                <span className="h-3 w-3 rounded-full bg-stage-mint/80" />
+                <span className="ml-3 text-xs uppercase tracking-[0.28em] text-white/38">Stage Me / Live Preview</span>
+              </div>
+
+              <div className="grid gap-4 p-4 lg:grid-cols-[220px_minmax(0,1fr)_220px]">
+                <div className="rounded-[1.5rem] border border-stage-pink/20 bg-stage-pink/8 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-stage-pink/76">MY AGENT</p>
+                  <div className="mt-4 flex items-center gap-3">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-stage-pink/30 bg-stage-pink/10 font-bebas text-3xl text-stage-pink">
+                      {profile.name.slice(0, 1).toUpperCase()}
+                    </div>
+                    <div>
+                      <strong className="block text-lg text-white">{profile.name}</strong>
+                      <small className="text-white/45">{profile.tags.slice(0, 2).join(' / ')}</small>
+                    </div>
+                  </div>
+                  <div className="mt-5 space-y-3">
+                    <MetricBar label="Welcome" value={profile.welcome} />
+                    <MetricBar label="Chemistry" value={profile.chemistry} />
+                  </div>
+                </div>
+
+                <div className="rounded-[1.75rem] border border-white/10 bg-black/25 p-5">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-xs uppercase tracking-[0.32em] text-white/42">Round Preview</p>
+                      <h3 className="mt-2 font-bebas text-4xl tracking-[0.16em] text-white/55">ROUND 3 / 5</h3>
+                    </div>
+                    <span className="rounded-full border border-stage-cyan/25 bg-stage-cyan/10 px-3 py-1.5 text-[11px] uppercase tracking-[0.24em] text-stage-cyan">
+                      {previewRound.stageLabel}
+                    </span>
+                  </div>
+                  <div className="mt-5 space-y-4">
+                    <LiveCard tone="pink" speaker={`${profile.name} 发起攻势`} text={previewRound.agentLine} align="left" />
+                    <LiveCard tone="cyan" speaker={`${selectedCandidate.name} 拆招回应`} text={previewRound.opponentLine} align="right" />
+                  </div>
+                </div>
+
+                <div className="rounded-[1.5rem] border border-stage-cyan/20 bg-stage-cyan/8 p-4">
+                  <p className="text-xs uppercase tracking-[0.3em] text-stage-cyan/76">TONIGHT'S REPORT</p>
+                  <div className="mt-5 flex items-end gap-2">
+                    <span className="font-bebas text-6xl leading-none text-white drop-shadow-text-pink">{report.totalScore}</span>
+                    <span className="pb-2 text-sm uppercase tracking-[0.22em] text-white/36">/100</span>
+                  </div>
+                  <p className="mt-4 text-sm leading-7 text-white/68">{report.summary}</p>
+                  <div className="mt-5 rounded-[1.25rem] border border-white/10 bg-black/20 p-4">
+                    <p className="text-xs uppercase tracking-[0.26em] text-stage-mint/80">Highlight</p>
+                    <p className="mt-2 text-sm leading-6 text-white/80">{report.highlight}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        </section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.6 }}
+          className="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-4"
         >
-          {authNotice}
-        </motion.div>
-      )}
-
-      <motion.div
-        initial={{ opacity: 0, y: 28 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.55, duration: 0.45 }}
-        className="mt-16 grid w-full max-w-5xl gap-4 md:grid-cols-3"
-      >
-        <HeroMetric label="Runtime" value={isDemoMode ? 'Demo Mode' : 'Live Ready'} hint="环境不完整也不断链" />
-        <HeroMetric label="Topic Feed" value={topicFeedTitle.replace('知乎话题流：', '')} hint="第 3 轮默认接入知乎话题" />
-        <HeroMetric label="API Status" value={apiStatusLabel} hint="内部 Route Handler 优先" />
-      </motion.div>
+          <BentoCard
+            badge="1v1 Duel"
+            title="像直播间一样看对局，而不是看聊天记录。"
+            body="固定 5 轮交锋，聚焦破冰、试探、话题轮和收束，不再是无尽 IM 气泡。"
+            tone="pink"
+          />
+          <BentoCard
+            badge="Arena Trial"
+            title="全场试配先扫一遍，再决定让谁上主舞台。"
+            body="候选擂台会先给出兼容率、风险点和 Top 3，让 1v1 更有目标。"
+            tone="cyan"
+          />
+          <BentoCard
+            badge="Death Replay"
+            title="最尬一句直接标红，不再模糊复盘。"
+            body="第四轮推进欲过强还是观点太空泛，会被单独抓出来解释清楚。"
+            tone="mint"
+          />
+          <BentoCard
+            badge="Radar Report"
+            title="欢迎度、共鸣、吸引和续聊意愿一屏读懂。"
+            body="评分和建议一起输出，适合继续往真实评分引擎迭代。"
+            tone="pink"
+          />
+        </motion.section>
+      </main>
     </div>
   );
 }
@@ -1195,6 +1476,34 @@ function HeroMetric({ label, value, hint }: { label: string; value: string; hint
       <p className="text-xs uppercase tracking-[0.34em] text-white/40">{label}</p>
       <h3 className="mt-3 text-lg font-semibold text-white">{value}</h3>
       <p className="mt-2 text-sm leading-6 text-white/50">{hint}</p>
+    </div>
+  );
+}
+
+function BentoCard({
+  badge,
+  title,
+  body,
+  tone
+}: {
+  badge: string;
+  title: string;
+  body: string;
+  tone: 'pink' | 'cyan' | 'mint';
+}) {
+  const toneMap = {
+    pink: 'border-stage-pink/20 bg-stage-pink/8 text-stage-pink',
+    cyan: 'border-stage-cyan/20 bg-stage-cyan/8 text-stage-cyan',
+    mint: 'border-stage-mint/20 bg-stage-mint/8 text-stage-mint'
+  } as const;
+
+  return (
+    <div className="rounded-[1.85rem] border border-white/10 bg-black/30 p-6 backdrop-blur-xl transition hover:-translate-y-1 hover:border-white/20">
+      <span className={`inline-flex rounded-full border px-3 py-1.5 text-[11px] uppercase tracking-[0.26em] ${toneMap[tone]}`}>
+        {badge}
+      </span>
+      <h3 className="mt-5 text-xl font-semibold leading-8 text-white">{title}</h3>
+      <p className="mt-4 text-sm leading-7 text-white/58">{body}</p>
     </div>
   );
 }
