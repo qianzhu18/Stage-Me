@@ -29,6 +29,11 @@ type Metric = {
   value: number;
 };
 
+type AppProps = {
+  initialScene?: Scene;
+  forceDemoSession?: boolean;
+};
+
 const pageVariants = {
   initial: { opacity: 0, scale: 0.985, filter: 'blur(12px)' },
   in: { opacity: 1, scale: 1, filter: 'blur(0px)' },
@@ -41,8 +46,8 @@ const appSteps: Array<{ id: Exclude<Scene, 'landing'>; label: string }> = [
   { id: 'report', label: 'Report' }
 ];
 
-function App() {
-  const [scene, setScene] = useState<Scene>('landing');
+function App({ initialScene = 'landing', forceDemoSession = false }: AppProps) {
+  const [scene, setScene] = useState<Scene>(initialScene);
   const [session, setSession] = usePersistentState<Session | null>('stage-me:session', null);
   const [profile, setProfile] = usePersistentState<AgentProfile>('stage-me:profile', defaultAgentProfile);
   const [savedReports, setSavedReports] = usePersistentState<SavedReport[]>('stage-me:reports', []);
@@ -147,6 +152,18 @@ function App() {
     url.searchParams.delete('auth');
     window.history.replaceState({}, '', url.toString());
   }, [setSession]);
+
+  useEffect(() => {
+    if (!forceDemoSession || session) {
+      return;
+    }
+
+    setSession({
+      provider: 'demo',
+      connectedAt: new Date().toISOString()
+    });
+    setAuthNotice('当前通过 /app 直达预览，系统已自动注入 Demo Session。');
+  }, [forceDemoSession, session, setSession]);
 
   useEffect(() => {
     if (!stageCandidates.some((candidate) => candidate.id === selectedCandidateId)) {
@@ -676,6 +693,9 @@ function SiteHeader({
           <a href="#product-preview" className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist transition hover:text-stage-ivory">
             Preview
           </a>
+          <a href="/app" className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist transition hover:text-stage-ivory">
+            Open App
+          </a>
           <span className="rounded-full border border-white/8 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.22em] text-stage-mist">
             {isDemoMode ? 'Demo fallback' : session ? 'Live OAuth' : 'Live ready'}
           </span>
@@ -767,6 +787,12 @@ function HeroSection({
           >
             {ctaLabel}
           </button>
+          <a
+            href="/app"
+            className="rounded-full border border-stage-cyan/16 bg-stage-cyan/6 px-6 py-3 text-sm font-semibold text-stage-cyan transition hover:-translate-y-1"
+          >
+            Open Direct Preview
+          </a>
           <a
             href="#product-preview"
             className="rounded-full border border-white/8 bg-white/[0.03] px-6 py-3 text-sm font-semibold text-stage-ivory/78 transition hover:border-white/16 hover:text-stage-ivory"
